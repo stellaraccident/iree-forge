@@ -438,7 +438,8 @@ struct HloLegalizeToLhlo : public HloLegalizeToLhloPassBase<HloLegalizeToLhlo> {
     BufferizeTypeConverter converter;
     auto isMemRefType = [](Type type) { return type.isa<BaseMemRefType>(); };
     target.addDynamicallyLegalOp<FuncOp>([&](FuncOp op) {
-      return converter.isSignatureLegal(op.getType()) &&
+      auto inputs = op.getType().getInputs();
+      return llvm::all_of(inputs, isMemRefType) &&
              converter.isLegal(&op.getBody());
     });
     target.addDynamicallyLegalOp<CallOp>([&](CallOp op) {
