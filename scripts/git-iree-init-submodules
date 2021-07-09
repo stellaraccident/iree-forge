@@ -8,11 +8,14 @@ top="$(git rev-parse --show-toplevel)"
 declare -A bundled_excludes=(
   [trees/iree/third_party/mlir-hlo]=EXCLUDE
   [trees/iree/third_party/tensorflow]=EXCLUDE
+  [trees/mlir-npcomp/external/llvm-project]=EXCLUDE
+  [trees/mlir-npcomp/external/mlir-hlo]=EXCLUDE
 )
 
 declare -A redirects=(
   [trees/iree/third_party/llvm-project]=../../../trees/llvm-project
   [trees/iree/third_party/mlir-hlo]=../../../trees/mlir-hlo
+  [trees/mlir-npcomp/external/llvm-project]=../../../trees/llvm-project
 )
 
 # submodule init on bundled submodules we don't do anything special with.
