@@ -36,7 +36,7 @@ do
       enabled_trees[$tree]="ON"
     done
     continue
-  elif [[ $posarg =~ ^([^@])@(.+)$ ]]; then
+  elif [[ $posarg =~ ^([^@]+)@(.+)$ ]]; then
     tree="${BASH_REMATCH[1]}"
     ref="${BASH_REMATCH[2]}"
   else
@@ -74,8 +74,15 @@ function sync_tree() {
     return 0
   fi
 
+  # Since update-tree requires a clean working dir, explicitly update submodules
+  # prior to bring it to clean.
+  git submodule update
+
   echo "Syncing tree $tree_name@$sync_ref"
   $td/git-iree-update-tree "$tree_name" "$sync_ref"
+
+  $td/git-iree-init-submodules
+  git submodule update
 }
 
 # Reads a submodule commit directly from the index for a path. This bypasses
