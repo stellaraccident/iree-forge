@@ -102,3 +102,4 @@ discovered_refs["mlir-hlo"]="$(find_submodule_ref trees/iree/third_party/mlir-hl
 
 sync_tree llvm-project
 sync_tree mlir-hlo
+sync_tree mlir-npcomp
