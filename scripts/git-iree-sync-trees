@@ -1,0 +1,57 @@
+#!/bin/bash
+# Syncs trees tracking upstream into the local repository.
+# Trees exist in a hierarchy of precedence, with the iree tree being at the
+# root, since its version dictates the default refs for dependent trees.
+# The update order is not configurable: it is just specified in code here.
+td="$(dirname $0)"
+source "$td/bash_script_setup.sh"
+
+declare -g -A default_refs=(
+  [iree]=HEAD
+  [llvm-project]=HEAD
+  [mlir-hlo]=HEAD
+  [mlir-npcomp]=HEAD
+)
+declare -g -A explicit_refs
+declare -g -A discovered_refs
+
+# Parse all positional arguments and populate explicit_refs. Each is of the
+# form tree@ref
+for posarg in "$@"
+do
+  if [[ $posarg =~ ^([^@])@(.+)$ ]]; then
+    tree="${BASH_REMATCH[1]}"
+    ref="${BASH_REMATCH[2]}"
+    if ! [[ -v default_refs[$tree] ]]; then
+      die "Unrecognized tree on command line: $posarg"
+    fi
+    echo "Command line pinned tree $tree@$ref"
+    explicit_refs[$tree]="$ref"
+  fi
+done
+
+function sync_tree() {
+  local tree_name="$1"
+  local sync_ref=""
+  if [[ -v explicit_refs[$tree_name] ]]; then
+    sync_ref="${explicit_refs[$tree_name]}"
+  fi
+  if [[ -z $sync_ref ]] && [[ -v discovered_refs[$tree_name] ]]; then
+    sync_ref="${discovered_refs[$tree_name]}"
+  fi
+  if [[ -z $sync_ref ]] && [[ -v default_refs[$tree_name] ]]; then
+    sync_ref="${default_refs[$tree_name]}"
+  fi
+
+  ! [[ -z $sync_ref ]] || die "Could not determine sync ref for $tree_name"
+  echo "Syncing tree $tree_name@$sync_ref"
+  $td/git-iree-update-tree "$tree_name" "$sync_ref"
+}
+
+# Perform updates.
+sync_tree iree
+discovered_refs["llvm-project"] = "$(find_submodule_ref trees/iree/third_party/llvm-project)"
+discovered_refs["mlir-hlo"] = "$(find_submodule_ref trees/iree/third_party/mlir-hlo)"
+
+sync_tree llvm-project
+sync_tree mlir-hlo
