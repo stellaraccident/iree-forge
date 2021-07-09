@@ -17,11 +17,7 @@
 
 #include "../PassDetail.h"
 #include "mlir/Conversion/AsyncToLLVM/AsyncToLLVM.h"
-#include "mlir/Conversion/LLVMCommon/ConversionTarget.h"
-#include "mlir/Conversion/LLVMCommon/Pattern.h"
-#include "mlir/Conversion/MemRefToLLVM/MemRefToLLVM.h"
 #include "mlir/Conversion/StandardToLLVM/ConvertStandardToLLVM.h"
-#include "mlir/Conversion/StandardToLLVM/ConvertStandardToLLVMPass.h"
 #include "mlir/Conversion/VectorToLLVM/ConvertVectorToLLVM.h"
 #include "mlir/Dialect/Async/IR/Async.h"
 #include "mlir/Dialect/GPU/GPUDialect.h"
@@ -318,7 +314,6 @@ void GpuToLLVMConversionPass::runOnOperation() {
   target.addIllegalDialect<gpu::GPUDialect>();
 
   populateVectorToLLVMConversionPatterns(converter, patterns);
-  populateMemRefToLLVMConversionPatterns(converter, patterns);
   populateStdToLLVMConversionPatterns(converter, patterns);
   populateAsyncStructuralTypeConversionsAndLegality(converter, patterns,
                                                     target);

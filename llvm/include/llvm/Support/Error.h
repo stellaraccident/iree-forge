@@ -703,7 +703,7 @@ private:
   }
 #endif
 
-  void assertIsChecked() const {
+  void assertIsChecked() {
 #if LLVM_ENABLE_ABI_BREAKING_CHECKS
     if (LLVM_UNLIKELY(Unchecked))
       fatalUncheckedExpected();

@@ -1905,8 +1905,10 @@ Instruction *InstCombinerImpl::visitCallInst(CallInst &CI) {
       unsigned IdxN = cast<ConstantInt>(Idx)->getZExtValue();
 
       // An insert that entirely overwrites Vec with SubVec is a nop.
-      if (VecNumElts == SubVecNumElts)
-        return replaceInstUsesWith(CI, SubVec);
+      if (VecNumElts == SubVecNumElts) {
+        replaceInstUsesWith(CI, SubVec);
+        return eraseInstFromFunction(CI);
+      }
 
       // Widen SubVec into a vector of the same width as Vec, since
       // shufflevector requires the two input vectors to be the same width.
@@ -1930,7 +1932,8 @@ Instruction *InstCombinerImpl::visitCallInst(CallInst &CI) {
         Mask.push_back(i);
 
       Value *Shuffle = Builder.CreateShuffleVector(Vec, WidenShuffle, Mask);
-      return replaceInstUsesWith(CI, Shuffle);
+      replaceInstUsesWith(CI, Shuffle);
+      return eraseInstFromFunction(CI);
     }
     break;
   }
@@ -1959,7 +1962,8 @@ Instruction *InstCombinerImpl::visitCallInst(CallInst &CI) {
         Mask.push_back(IdxN + i);
 
       Value *Shuffle = Builder.CreateShuffleVector(Vec, Mask);
-      return replaceInstUsesWith(CI, Shuffle);
+      replaceInstUsesWith(CI, Shuffle);
+      return eraseInstFromFunction(CI);
     }
     break;
   }
@@ -1986,37 +1990,12 @@ Instruction *InstCombinerImpl::visitCallInst(CallInst &CI) {
                  "Expected or reduction.");
           Res = Builder.CreateIsNotNull(Res);
         }
-        return replaceInstUsesWith(CI, Res);
+        replaceInstUsesWith(CI, Res);
+        return eraseInstFromFunction(CI);
       }
     LLVM_FALLTHROUGH;
   }
-  case Intrinsic::vector_reduce_add: {
-    if (IID == Intrinsic::vector_reduce_add) {
-      // Convert vector_reduce_add(ZExt(<n x i1>)) to
-      // ZExtOrTrunc(ctpop(bitcast <n x i1> to in)).
-      // Convert vector_reduce_add(SExt(<n x i1>)) to
-      // -ZExtOrTrunc(ctpop(bitcast <n x i1> to in)).
-      // Convert vector_reduce_add(<n x i1>) to
-      // Trunc(ctpop(bitcast <n x i1> to in)).
-      Value *Arg = II->getArgOperand(0);
-      Value *Vect;
-      if (match(Arg, m_ZExtOrSExtOrSelf(m_Value(Vect)))) {
-        if (auto *FTy = dyn_cast<FixedVectorType>(Vect->getType()))
-          if (FTy->getElementType() == Builder.getInt1Ty()) {
-            Value *V = Builder.CreateBitCast(
-                Vect, Builder.getIntNTy(FTy->getNumElements()));
-            Value *Res = Builder.CreateUnaryIntrinsic(Intrinsic::ctpop, V);
-            if (Res->getType() != II->getType())
-              Res = Builder.CreateZExtOrTrunc(Res, II->getType());
-            if (Arg != Vect &&
-                cast<Instruction>(Arg)->getOpcode() == Instruction::SExt)
-              Res = Builder.CreateNeg(Res);
-            return replaceInstUsesWith(CI, Res);;
-          }
-      }
-    }
-    LLVM_FALLTHROUGH;
-  }
+  case Intrinsic::vector_reduce_add:
   case Intrinsic::vector_reduce_mul:
   case Intrinsic::vector_reduce_xor:
   case Intrinsic::vector_reduce_umax:

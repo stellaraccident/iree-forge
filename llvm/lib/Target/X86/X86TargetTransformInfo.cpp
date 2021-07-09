@@ -1673,24 +1673,24 @@ InstructionCost X86TTIImpl::getCastInstrCost(unsigned Opcode, Type *Dst,
     { ISD::SIGN_EXTEND, MVT::v8i64,  MVT::v8i32,  1 },
     { ISD::ZERO_EXTEND, MVT::v8i64,  MVT::v8i32,  1 },
 
-    { ISD::SIGN_EXTEND, MVT::v32i16, MVT::v32i8,  3 }, // FIXME: May not be right
-    { ISD::ZERO_EXTEND, MVT::v32i16, MVT::v32i8,  3 }, // FIXME: May not be right
+    { ISD::SIGN_EXTEND, MVT::v32i16, MVT::v32i8, 3 }, // FIXME: May not be right
+    { ISD::ZERO_EXTEND, MVT::v32i16, MVT::v32i8, 3 }, // FIXME: May not be right
 
     { ISD::SINT_TO_FP,  MVT::v8f64,  MVT::v8i1,   4 },
     { ISD::SINT_TO_FP,  MVT::v16f32, MVT::v16i1,  3 },
-    { ISD::SINT_TO_FP,  MVT::v8f64,  MVT::v16i8,  2 },
-    { ISD::SINT_TO_FP,  MVT::v16f32, MVT::v16i8,  1 },
+    { ISD::SINT_TO_FP,  MVT::v8f64,  MVT::v8i8,   2 },
+    { ISD::SINT_TO_FP,  MVT::v16f32, MVT::v16i8,  2 },
     { ISD::SINT_TO_FP,  MVT::v8f64,  MVT::v8i16,  2 },
-    { ISD::SINT_TO_FP,  MVT::v16f32, MVT::v16i16, 1 },
-    { ISD::SINT_TO_FP,  MVT::v8f64,  MVT::v8i32,  1 },
+    { ISD::SINT_TO_FP,  MVT::v16f32, MVT::v16i16, 2 },
     { ISD::SINT_TO_FP,  MVT::v16f32, MVT::v16i32, 1 },
+    { ISD::SINT_TO_FP,  MVT::v8f64,  MVT::v8i32,  1 },
 
     { ISD::UINT_TO_FP,  MVT::v8f64,  MVT::v8i1,   4 },
     { ISD::UINT_TO_FP,  MVT::v16f32, MVT::v16i1,  3 },
-    { ISD::UINT_TO_FP,  MVT::v8f64,  MVT::v16i8,  2 },
-    { ISD::UINT_TO_FP,  MVT::v16f32, MVT::v16i8,  1 },
+    { ISD::UINT_TO_FP,  MVT::v8f64,  MVT::v8i8,   2 },
+    { ISD::UINT_TO_FP,  MVT::v16f32, MVT::v16i8,  2 },
     { ISD::UINT_TO_FP,  MVT::v8f64,  MVT::v8i16,  2 },
-    { ISD::UINT_TO_FP,  MVT::v16f32, MVT::v16i16, 1 },
+    { ISD::UINT_TO_FP,  MVT::v16f32, MVT::v16i16, 2 },
     { ISD::UINT_TO_FP,  MVT::v8f64,  MVT::v8i32,  1 },
     { ISD::UINT_TO_FP,  MVT::v16f32, MVT::v16i32, 1 },
     { ISD::UINT_TO_FP,  MVT::v8f32,  MVT::v8i64, 26 },
@@ -1820,31 +1820,16 @@ InstructionCost X86TTIImpl::getCastInstrCost(unsigned Opcode, Type *Dst,
     { ISD::SIGN_EXTEND, MVT::v4i64,  MVT::v4i1,   1 }, // vpternlogq
     { ISD::ZERO_EXTEND, MVT::v4i64,  MVT::v4i1,   2 }, // vpternlogq+psrlq
 
-    { ISD::SIGN_EXTEND, MVT::v4i64,  MVT::v16i8,  1 },
-    { ISD::ZERO_EXTEND, MVT::v4i64,  MVT::v16i8,  1 },
-    { ISD::SIGN_EXTEND, MVT::v8i32,  MVT::v16i8,  1 },
-    { ISD::ZERO_EXTEND, MVT::v8i32,  MVT::v16i8,  1 },
-    { ISD::SIGN_EXTEND, MVT::v16i16, MVT::v16i8,  1 },
-    { ISD::ZERO_EXTEND, MVT::v16i16, MVT::v16i8,  1 },
-    { ISD::SIGN_EXTEND, MVT::v4i64,  MVT::v8i16,  1 },
-    { ISD::ZERO_EXTEND, MVT::v4i64,  MVT::v8i16,  1 },
-    { ISD::SIGN_EXTEND, MVT::v8i32,  MVT::v8i16,  1 },
-    { ISD::ZERO_EXTEND, MVT::v8i32,  MVT::v8i16,  1 },
-    { ISD::SIGN_EXTEND, MVT::v4i64,  MVT::v4i32,  1 },
-    { ISD::ZERO_EXTEND, MVT::v4i64,  MVT::v4i32,  1 },
-
-    { ISD::SINT_TO_FP,  MVT::v2f64,  MVT::v16i8,  1 },
-    { ISD::SINT_TO_FP,  MVT::v8f32,  MVT::v16i8,  1 },
-    { ISD::SINT_TO_FP,  MVT::v2f64,  MVT::v8i16,  1 },
-    { ISD::SINT_TO_FP,  MVT::v8f32,  MVT::v8i16,  1 },
-
     { ISD::UINT_TO_FP,  MVT::f32,    MVT::i64,    1 },
     { ISD::UINT_TO_FP,  MVT::f64,    MVT::i64,    1 },
-    { ISD::UINT_TO_FP,  MVT::v2f64,  MVT::v16i8,  1 },
-    { ISD::UINT_TO_FP,  MVT::v8f32,  MVT::v16i8,  1 },
-    { ISD::UINT_TO_FP,  MVT::v2f64,  MVT::v8i16,  1 },
-    { ISD::UINT_TO_FP,  MVT::v8f32,  MVT::v8i16,  1 },
+    { ISD::UINT_TO_FP,  MVT::v2f64,  MVT::v2i8,   2 },
+    { ISD::UINT_TO_FP,  MVT::v4f64,  MVT::v4i8,   2 },
+    { ISD::UINT_TO_FP,  MVT::v8f32,  MVT::v8i8,   2 },
+    { ISD::UINT_TO_FP,  MVT::v2f64,  MVT::v2i16,  5 },
+    { ISD::UINT_TO_FP,  MVT::v4f64,  MVT::v4i16,  2 },
+    { ISD::UINT_TO_FP,  MVT::v8f32,  MVT::v8i16,  2 },
     { ISD::UINT_TO_FP,  MVT::v2f32,  MVT::v2i32,  1 },
+    { ISD::UINT_TO_FP,  MVT::v2f64,  MVT::v2i32,  1 },
     { ISD::UINT_TO_FP,  MVT::v4f32,  MVT::v4i32,  1 },
     { ISD::UINT_TO_FP,  MVT::v4f64,  MVT::v4i32,  1 },
     { ISD::UINT_TO_FP,  MVT::v8f32,  MVT::v8i32,  1 },
@@ -1869,23 +1854,22 @@ InstructionCost X86TTIImpl::getCastInstrCost(unsigned Opcode, Type *Dst,
     { ISD::ZERO_EXTEND, MVT::v4i64,  MVT::v4i1,   3 },
     { ISD::SIGN_EXTEND, MVT::v8i32,  MVT::v8i1,   3 },
     { ISD::ZERO_EXTEND, MVT::v8i32,  MVT::v8i1,   3 },
+    { ISD::SIGN_EXTEND, MVT::v4i64,  MVT::v4i8,   1 },
+    { ISD::ZERO_EXTEND, MVT::v4i64,  MVT::v4i8,   1 },
+    { ISD::SIGN_EXTEND, MVT::v8i32,  MVT::v8i8,   1 },
+    { ISD::ZERO_EXTEND, MVT::v8i32,  MVT::v8i8,   1 },
     { ISD::SIGN_EXTEND, MVT::v16i16, MVT::v16i1,  1 },
     { ISD::ZERO_EXTEND, MVT::v16i16, MVT::v16i1,  1 },
-
-    { ISD::SIGN_EXTEND, MVT::v4i64,  MVT::v16i8,  2 },
-    { ISD::ZERO_EXTEND, MVT::v4i64,  MVT::v16i8,  2 },
-    { ISD::SIGN_EXTEND, MVT::v8i32,  MVT::v16i8,  2 },
-    { ISD::ZERO_EXTEND, MVT::v8i32,  MVT::v16i8,  2 },
-    { ISD::SIGN_EXTEND, MVT::v16i16, MVT::v16i8,  2 },
-    { ISD::ZERO_EXTEND, MVT::v16i16, MVT::v16i8,  2 },
-    { ISD::SIGN_EXTEND, MVT::v4i64,  MVT::v8i16,  2 },
-    { ISD::ZERO_EXTEND, MVT::v4i64,  MVT::v8i16,  2 },
-    { ISD::SIGN_EXTEND, MVT::v8i32,  MVT::v8i16,  2 },
-    { ISD::ZERO_EXTEND, MVT::v8i32,  MVT::v8i16,  2 },
+    { ISD::SIGN_EXTEND, MVT::v16i16, MVT::v16i8,  1 },
+    { ISD::ZERO_EXTEND, MVT::v16i16, MVT::v16i8,  1 },
+    { ISD::SIGN_EXTEND, MVT::v4i64,  MVT::v4i16,  1 },
+    { ISD::ZERO_EXTEND, MVT::v4i64,  MVT::v4i16,  1 },
+    { ISD::SIGN_EXTEND, MVT::v8i32,  MVT::v8i16,  1 },
+    { ISD::ZERO_EXTEND, MVT::v8i32,  MVT::v8i16,  1 },
+    { ISD::SIGN_EXTEND, MVT::v4i64,  MVT::v4i32,  1 },
+    { ISD::ZERO_EXTEND, MVT::v4i64,  MVT::v4i32,  1 },
     { ISD::ZERO_EXTEND, MVT::v16i32, MVT::v16i16, 3 },
     { ISD::SIGN_EXTEND, MVT::v16i32, MVT::v16i16, 3 },
-    { ISD::SIGN_EXTEND, MVT::v4i64,  MVT::v4i32,  2 },
-    { ISD::ZERO_EXTEND, MVT::v4i64,  MVT::v4i32,  2 },
 
     { ISD::TRUNCATE,    MVT::v2i8,   MVT::v2i32,  1 },
     { ISD::TRUNCATE,    MVT::v2i16,  MVT::v2i64,  1 },
@@ -1907,18 +1891,10 @@ InstructionCost X86TTIImpl::getCastInstrCost(unsigned Opcode, Type *Dst,
     { ISD::FP_TO_UINT,  MVT::v8i32,  MVT::v8f32,  4 },
     { ISD::FP_TO_UINT,  MVT::v8i32,  MVT::v8f64, 15 },
 
-    { ISD::SINT_TO_FP,  MVT::v2f64,  MVT::v16i8,  2 },
-    { ISD::SINT_TO_FP,  MVT::v8f32,  MVT::v16i8,  2 },
-    { ISD::SINT_TO_FP,  MVT::v2f64,  MVT::v8i16,  2 },
-    { ISD::SINT_TO_FP,  MVT::v8f32,  MVT::v8i16,  2 },
     { ISD::SINT_TO_FP,  MVT::v4f64,  MVT::v4i32,  1 },
     { ISD::SINT_TO_FP,  MVT::v8f32,  MVT::v8i32,  1 },
     { ISD::SINT_TO_FP,  MVT::v8f64,  MVT::v8i32,  3 },
 
-    { ISD::UINT_TO_FP,  MVT::v2f64,  MVT::v16i8,  2 },
-    { ISD::UINT_TO_FP,  MVT::v8f32,  MVT::v16i8,  2 },
-    { ISD::UINT_TO_FP,  MVT::v2f64,  MVT::v8i16,  2 },
-    { ISD::UINT_TO_FP,  MVT::v8f32,  MVT::v8i16,  2 },
     { ISD::UINT_TO_FP,  MVT::v2f32,  MVT::v2i32,  2 },
     { ISD::UINT_TO_FP,  MVT::v2f64,  MVT::v2i32,  1 },
     { ISD::UINT_TO_FP,  MVT::v4f32,  MVT::v4i32,  2 },
@@ -1928,111 +1904,139 @@ InstructionCost X86TTIImpl::getCastInstrCost(unsigned Opcode, Type *Dst,
   };
 
   static const TypeConversionCostTblEntry AVXConversionTbl[] = {
-    { ISD::SIGN_EXTEND, MVT::v4i64,  MVT::v4i1,   6 },
-    { ISD::ZERO_EXTEND, MVT::v4i64,  MVT::v4i1,   4 },
-    { ISD::SIGN_EXTEND, MVT::v8i32,  MVT::v8i1,   7 },
-    { ISD::ZERO_EXTEND, MVT::v8i32,  MVT::v8i1,   4 },
-    { ISD::SIGN_EXTEND, MVT::v16i16, MVT::v16i1,  4 },
-    { ISD::ZERO_EXTEND, MVT::v16i16, MVT::v16i1,  4 },
+    { ISD::SIGN_EXTEND, MVT::v4i64,  MVT::v4i1,  6 },
+    { ISD::ZERO_EXTEND, MVT::v4i64,  MVT::v4i1,  4 },
+    { ISD::SIGN_EXTEND, MVT::v8i32,  MVT::v8i1,  7 },
+    { ISD::ZERO_EXTEND, MVT::v8i32,  MVT::v8i1,  4 },
+    { ISD::SIGN_EXTEND, MVT::v4i64,  MVT::v4i8,  3 },
+    { ISD::ZERO_EXTEND, MVT::v4i64,  MVT::v4i8,  3 },
+    { ISD::SIGN_EXTEND, MVT::v8i32,  MVT::v8i8,  3 },
+    { ISD::ZERO_EXTEND, MVT::v8i32,  MVT::v8i8,  3 },
+    { ISD::SIGN_EXTEND, MVT::v16i16, MVT::v16i1, 4 },
+    { ISD::ZERO_EXTEND, MVT::v16i16, MVT::v16i1, 4 },
+    { ISD::SIGN_EXTEND, MVT::v16i16, MVT::v16i8, 3 },
+    { ISD::ZERO_EXTEND, MVT::v16i16, MVT::v16i8, 3 },
+    { ISD::SIGN_EXTEND, MVT::v4i64,  MVT::v4i16, 3 },
+    { ISD::ZERO_EXTEND, MVT::v4i64,  MVT::v4i16, 3 },
+    { ISD::SIGN_EXTEND, MVT::v8i32,  MVT::v8i16, 3 },
+    { ISD::ZERO_EXTEND, MVT::v8i32,  MVT::v8i16, 3 },
+    { ISD::SIGN_EXTEND, MVT::v4i64,  MVT::v4i32, 3 },
+    { ISD::ZERO_EXTEND, MVT::v4i64,  MVT::v4i32, 3 },
 
-    { ISD::SIGN_EXTEND, MVT::v4i64,  MVT::v16i8,  3 },
-    { ISD::ZERO_EXTEND, MVT::v4i64,  MVT::v16i8,  3 },
-    { ISD::SIGN_EXTEND, MVT::v8i32,  MVT::v16i8,  3 },
-    { ISD::ZERO_EXTEND, MVT::v8i32,  MVT::v16i8,  3 },
-    { ISD::SIGN_EXTEND, MVT::v16i16, MVT::v16i8,  3 },
-    { ISD::ZERO_EXTEND, MVT::v16i16, MVT::v16i8,  3 },
-    { ISD::SIGN_EXTEND, MVT::v4i64,  MVT::v8i16,  3 },
-    { ISD::ZERO_EXTEND, MVT::v4i64,  MVT::v8i16,  3 },
-    { ISD::SIGN_EXTEND, MVT::v8i32,  MVT::v8i16,  3 },
-    { ISD::ZERO_EXTEND, MVT::v8i32,  MVT::v8i16,  3 },
-    { ISD::SIGN_EXTEND, MVT::v4i64,  MVT::v4i32,  3 },
-    { ISD::ZERO_EXTEND, MVT::v4i64,  MVT::v4i32,  3 },
+    { ISD::TRUNCATE,    MVT::v4i1,  MVT::v4i64,  4 },
+    { ISD::TRUNCATE,    MVT::v8i1,  MVT::v8i32,  5 },
+    { ISD::TRUNCATE,    MVT::v16i1, MVT::v16i16, 4 },
+    { ISD::TRUNCATE,    MVT::v8i1,  MVT::v8i64,  9 },
+    { ISD::TRUNCATE,    MVT::v16i1, MVT::v16i64, 11 },
 
-    { ISD::TRUNCATE,    MVT::v4i1,   MVT::v4i64,  4 },
-    { ISD::TRUNCATE,    MVT::v8i1,   MVT::v8i32,  5 },
-    { ISD::TRUNCATE,    MVT::v16i1,  MVT::v16i16, 4 },
-    { ISD::TRUNCATE,    MVT::v8i1,   MVT::v8i64,  9 },
-    { ISD::TRUNCATE,    MVT::v16i1,  MVT::v16i64, 11 },
+    { ISD::TRUNCATE,    MVT::v16i8, MVT::v16i16, 2 }, // and+extract+packuswb
+    { ISD::TRUNCATE,    MVT::v2i8,  MVT::v2i32,  2 }, // and+packusdw+packuswb
+    { ISD::TRUNCATE,    MVT::v8i8,  MVT::v8i32,  4 },
+    { ISD::TRUNCATE,    MVT::v8i16, MVT::v8i32,  5 },
+    { ISD::TRUNCATE,    MVT::v4i8,  MVT::v4i64,  4 },
+    { ISD::TRUNCATE,    MVT::v4i16, MVT::v4i64,  3 }, // and+extract+2*packusdw
+    { ISD::TRUNCATE,    MVT::v4i32, MVT::v4i64,  2 },
+    { ISD::TRUNCATE,    MVT::v8i8,  MVT::v8i64, 11 },
+    { ISD::TRUNCATE,    MVT::v8i16, MVT::v8i64,  9 },
+    { ISD::TRUNCATE,    MVT::v8i32, MVT::v8i64,  3 },
+    { ISD::TRUNCATE,    MVT::v16i8, MVT::v16i64, 11 },
 
-    { ISD::TRUNCATE,    MVT::v16i8,  MVT::v16i16, 2 }, // and+extract+packuswb
-    { ISD::TRUNCATE,    MVT::v2i8,   MVT::v2i32,  2 }, // and+packusdw+packuswb
-    { ISD::TRUNCATE,    MVT::v8i8,   MVT::v8i32,  4 },
-    { ISD::TRUNCATE,    MVT::v8i16,  MVT::v8i32,  5 },
-    { ISD::TRUNCATE,    MVT::v4i8,   MVT::v4i64,  4 },
-    { ISD::TRUNCATE,    MVT::v4i16,  MVT::v4i64,  3 }, // and+extract+2*packusdw
-    { ISD::TRUNCATE,    MVT::v4i32,  MVT::v4i64,  2 },
-    { ISD::TRUNCATE,    MVT::v8i8,   MVT::v8i64, 11 },
-    { ISD::TRUNCATE,    MVT::v8i16,  MVT::v8i64,  9 },
-    { ISD::TRUNCATE,    MVT::v8i32,  MVT::v8i64,  3 },
-    { ISD::TRUNCATE,    MVT::v16i8,  MVT::v16i64, 11 },
+    { ISD::SINT_TO_FP,  MVT::v4f32, MVT::v4i1,  3 },
+    { ISD::SINT_TO_FP,  MVT::v4f64, MVT::v4i1,  3 },
+    { ISD::SINT_TO_FP,  MVT::v8f32, MVT::v8i1,  8 },
+    { ISD::SINT_TO_FP,  MVT::v4f32, MVT::v4i8,  3 },
+    { ISD::SINT_TO_FP,  MVT::v4f64, MVT::v4i8,  3 },
+    { ISD::SINT_TO_FP,  MVT::v8f32, MVT::v8i8,  8 },
+    { ISD::SINT_TO_FP,  MVT::v4f32, MVT::v4i16, 3 },
+    { ISD::SINT_TO_FP,  MVT::v4f64, MVT::v4i16, 3 },
+    { ISD::SINT_TO_FP,  MVT::v8f32, MVT::v8i16, 5 },
+    { ISD::SINT_TO_FP,  MVT::v4f64, MVT::v4i32, 2 },
+    { ISD::SINT_TO_FP,  MVT::v8f32, MVT::v8i32, 2 },
+    { ISD::SINT_TO_FP,  MVT::v8f64, MVT::v8i32, 4 },
+    { ISD::SINT_TO_FP,  MVT::v4f32, MVT::v2i64, 5 },
+    { ISD::SINT_TO_FP,  MVT::v4f32, MVT::v4i64, 8 },
 
-    { ISD::SINT_TO_FP,  MVT::v4f32,  MVT::v4i1,   3 },
-    { ISD::SINT_TO_FP,  MVT::v4f64,  MVT::v4i1,   3 },
-    { ISD::SINT_TO_FP,  MVT::v8f32,  MVT::v8i1,   8 },
-    { ISD::SINT_TO_FP,  MVT::v8f32,  MVT::v16i8,  4 },
-    { ISD::SINT_TO_FP,  MVT::v4f64,  MVT::v16i8,  2 },
-    { ISD::SINT_TO_FP,  MVT::v8f32,  MVT::v8i16,  4 },
-    { ISD::SINT_TO_FP,  MVT::v4f64,  MVT::v8i16,  2 },
-    { ISD::SINT_TO_FP,  MVT::v4f64,  MVT::v4i32,  2 },
-    { ISD::SINT_TO_FP,  MVT::v8f32,  MVT::v8i32,  2 },
-    { ISD::SINT_TO_FP,  MVT::v8f64,  MVT::v8i32,  4 },
-    { ISD::SINT_TO_FP,  MVT::v4f32,  MVT::v2i64,  5 },
-    { ISD::SINT_TO_FP,  MVT::v4f32,  MVT::v4i64,  8 },
+    { ISD::UINT_TO_FP,  MVT::v4f32, MVT::v4i1,  7 },
+    { ISD::UINT_TO_FP,  MVT::v4f64, MVT::v4i1,  7 },
+    { ISD::UINT_TO_FP,  MVT::v8f32, MVT::v8i1,  6 },
+    { ISD::UINT_TO_FP,  MVT::v4f32, MVT::v4i8,  2 },
+    { ISD::UINT_TO_FP,  MVT::v4f64, MVT::v4i8,  2 },
+    { ISD::UINT_TO_FP,  MVT::v8f32, MVT::v8i8,  5 },
+    { ISD::UINT_TO_FP,  MVT::v4f32, MVT::v4i16, 2 },
+    { ISD::UINT_TO_FP,  MVT::v4f64, MVT::v4i16, 2 },
+    { ISD::UINT_TO_FP,  MVT::v8f32, MVT::v8i16, 5 },
+    { ISD::UINT_TO_FP,  MVT::v2f64, MVT::v2i32, 4 },
+    { ISD::UINT_TO_FP,  MVT::v2f32, MVT::v2i64, 10 },
+    { ISD::UINT_TO_FP,  MVT::v4f32, MVT::v4i32, 5 },
+    { ISD::UINT_TO_FP,  MVT::v4f64, MVT::v4i32, 6 },
+    { ISD::UINT_TO_FP,  MVT::v4f32, MVT::v4i64, 18 },
+    { ISD::UINT_TO_FP,  MVT::v4f64, MVT::v4i64, 10 },
+    { ISD::UINT_TO_FP,  MVT::v8f32, MVT::v8i32, 8 },
+    { ISD::UINT_TO_FP,  MVT::v8f64, MVT::v8i32, 10 },
+    { ISD::UINT_TO_FP,  MVT::v2f64, MVT::v2i64, 5 },
+    { ISD::UINT_TO_FP,  MVT::v4f64, MVT::v4i64, 6 },
 
-    { ISD::UINT_TO_FP,  MVT::v4f32,  MVT::v4i1,   7 },
-    { ISD::UINT_TO_FP,  MVT::v4f64,  MVT::v4i1,   7 },
-    { ISD::UINT_TO_FP,  MVT::v8f32,  MVT::v8i1,   6 },
-    { ISD::UINT_TO_FP,  MVT::v8f32,  MVT::v16i8,  4 },
-    { ISD::UINT_TO_FP,  MVT::v4f64,  MVT::v16i8,  2 },
-    { ISD::UINT_TO_FP,  MVT::v8f32,  MVT::v8i16,  4 },
-    { ISD::UINT_TO_FP,  MVT::v4f64,  MVT::v8i16,  2 },
-    { ISD::UINT_TO_FP,  MVT::v2f32,  MVT::v2i32,  4 },
-    { ISD::UINT_TO_FP,  MVT::v2f64,  MVT::v2i32,  4 },
-    { ISD::UINT_TO_FP,  MVT::v4f32,  MVT::v4i32,  5 },
-    { ISD::UINT_TO_FP,  MVT::v4f64,  MVT::v4i32,  6 },
-    { ISD::UINT_TO_FP,  MVT::v8f32,  MVT::v8i32,  8 },
-    { ISD::UINT_TO_FP,  MVT::v8f64,  MVT::v8i32, 10 },
-    { ISD::UINT_TO_FP,  MVT::v2f32,  MVT::v2i64, 10 },
-    { ISD::UINT_TO_FP,  MVT::v4f32,  MVT::v4i64, 18 },
-    { ISD::UINT_TO_FP,  MVT::v2f64,  MVT::v2i64,  5 },
-    { ISD::UINT_TO_FP,  MVT::v4f64,  MVT::v4i64, 10 },
+    { ISD::FP_TO_SINT,  MVT::v8i8,  MVT::v8f32, 4 },
+    { ISD::FP_TO_SINT,  MVT::v4i8,  MVT::v4f64, 3 },
+    { ISD::FP_TO_SINT,  MVT::v4i16, MVT::v4f64, 2 },
+    { ISD::FP_TO_SINT,  MVT::v4i32, MVT::v4f64, 2 },
+    { ISD::FP_TO_SINT,  MVT::v8i16, MVT::v8f32, 3 },
+    { ISD::FP_TO_SINT,  MVT::v8i32, MVT::v8f32, 2 },
+    { ISD::FP_TO_SINT,  MVT::v8i32, MVT::v8f64, 5 },
 
-    { ISD::FP_TO_SINT,  MVT::v8i8,   MVT::v8f32,  4 },
-    { ISD::FP_TO_SINT,  MVT::v4i8,   MVT::v4f64,  3 },
-    { ISD::FP_TO_SINT,  MVT::v4i16,  MVT::v4f64,  2 },
-    { ISD::FP_TO_SINT,  MVT::v4i32,  MVT::v4f64,  2 },
-    { ISD::FP_TO_SINT,  MVT::v8i16,  MVT::v8f32,  3 },
-    { ISD::FP_TO_SINT,  MVT::v8i32,  MVT::v8f32,  2 },
-    { ISD::FP_TO_SINT,  MVT::v8i32,  MVT::v8f64,  5 },
-
-    { ISD::FP_TO_UINT,  MVT::v2i32,  MVT::v2f32,  5 },
-    { ISD::FP_TO_UINT,  MVT::v2i32,  MVT::v2f64,  9 },
-    { ISD::FP_TO_UINT,  MVT::v4i32,  MVT::v4f32,  5 },
-    { ISD::FP_TO_UINT,  MVT::v4i8,   MVT::v4f64,  3 },
-    { ISD::FP_TO_UINT,  MVT::v4i16,  MVT::v4f64,  2 },
-    { ISD::FP_TO_UINT,  MVT::v4i32,  MVT::v4f64,  9 },
-    { ISD::FP_TO_UINT,  MVT::v8i8,   MVT::v8f32,  4 },
-    { ISD::FP_TO_UINT,  MVT::v8i16,  MVT::v8f32,  3 },
-    { ISD::FP_TO_UINT,  MVT::v8i32,  MVT::v8f32,  9 },
-    { ISD::FP_TO_UINT,  MVT::v8i32,  MVT::v8f64, 19 },
+    { ISD::FP_TO_UINT,  MVT::v2i32, MVT::v2f32, 5 },
+    { ISD::FP_TO_UINT,  MVT::v2i32, MVT::v2f64, 9 },
+    { ISD::FP_TO_UINT,  MVT::v4i32, MVT::v4f32, 5 },
+    { ISD::FP_TO_UINT,  MVT::v4i8,  MVT::v4f64, 3 },
+    { ISD::FP_TO_UINT,  MVT::v4i16, MVT::v4f64, 2 },
+    { ISD::FP_TO_UINT,  MVT::v4i32, MVT::v4f64, 9 },
+    { ISD::FP_TO_UINT,  MVT::v8i8,  MVT::v8f32, 4 },
+    { ISD::FP_TO_UINT,  MVT::v8i16, MVT::v8f32, 3 },
+    { ISD::FP_TO_UINT,  MVT::v8i32, MVT::v8f32, 9 },
+    { ISD::FP_TO_UINT,  MVT::v8i32, MVT::v8f64, 19 },
 
     { ISD::FP_EXTEND,   MVT::v4f64,  MVT::v4f32,  1 },
     { ISD::FP_ROUND,    MVT::v4f32,  MVT::v4f64,  1 },
   };
 
   static const TypeConversionCostTblEntry SSE41ConversionTbl[] = {
-    { ISD::ZERO_EXTEND, MVT::v2i64, MVT::v16i8,   1 },
-    { ISD::SIGN_EXTEND, MVT::v2i64, MVT::v16i8,   1 },
-    { ISD::ZERO_EXTEND, MVT::v4i32, MVT::v16i8,   1 },
-    { ISD::SIGN_EXTEND, MVT::v4i32, MVT::v16i8,   1 },
-    { ISD::ZERO_EXTEND, MVT::v8i16, MVT::v16i8,   1 },
-    { ISD::SIGN_EXTEND, MVT::v8i16, MVT::v16i8,   1 },
-    { ISD::ZERO_EXTEND, MVT::v2i64, MVT::v8i16,   1 },
-    { ISD::SIGN_EXTEND, MVT::v2i64, MVT::v8i16,   1 },
-    { ISD::ZERO_EXTEND, MVT::v4i32, MVT::v8i16,   1 },
-    { ISD::SIGN_EXTEND, MVT::v4i32, MVT::v8i16,   1 },
-    { ISD::ZERO_EXTEND, MVT::v2i64, MVT::v4i32,   1 },
-    { ISD::SIGN_EXTEND, MVT::v2i64, MVT::v4i32,   1 },
+    { ISD::ZERO_EXTEND, MVT::v4i64, MVT::v4i8,    2 },
+    { ISD::SIGN_EXTEND, MVT::v4i64, MVT::v4i8,    2 },
+    { ISD::ZERO_EXTEND, MVT::v4i64, MVT::v4i16,   2 },
+    { ISD::SIGN_EXTEND, MVT::v4i64, MVT::v4i16,   2 },
+    { ISD::ZERO_EXTEND, MVT::v4i64, MVT::v4i32,   2 },
+    { ISD::SIGN_EXTEND, MVT::v4i64, MVT::v4i32,   2 },
+
+    { ISD::ZERO_EXTEND, MVT::v2i16,  MVT::v2i8,   1 },
+    { ISD::SIGN_EXTEND, MVT::v2i16,  MVT::v2i8,   1 },
+    { ISD::ZERO_EXTEND, MVT::v2i32,  MVT::v2i8,   1 },
+    { ISD::SIGN_EXTEND, MVT::v2i32,  MVT::v2i8,   1 },
+    { ISD::ZERO_EXTEND, MVT::v2i64,  MVT::v2i8,   1 },
+    { ISD::SIGN_EXTEND, MVT::v2i64,  MVT::v2i8,   1 },
+    { ISD::ZERO_EXTEND, MVT::v4i16,  MVT::v4i8,   1 },
+    { ISD::SIGN_EXTEND, MVT::v4i16,  MVT::v4i8,   1 },
+    { ISD::ZERO_EXTEND, MVT::v4i32,  MVT::v4i8,   1 },
+    { ISD::SIGN_EXTEND, MVT::v4i32,  MVT::v4i8,   1 },
+    { ISD::ZERO_EXTEND, MVT::v8i16,  MVT::v8i8,   1 },
+    { ISD::SIGN_EXTEND, MVT::v8i16,  MVT::v8i8,   1 },
+    { ISD::ZERO_EXTEND, MVT::v8i32,  MVT::v8i8,   2 },
+    { ISD::SIGN_EXTEND, MVT::v8i32,  MVT::v8i8,   2 },
+    { ISD::ZERO_EXTEND, MVT::v16i16, MVT::v16i8,  2 },
+    { ISD::SIGN_EXTEND, MVT::v16i16, MVT::v16i8,  2 },
+    { ISD::ZERO_EXTEND, MVT::v16i32, MVT::v16i8,  4 },
+    { ISD::SIGN_EXTEND, MVT::v16i32, MVT::v16i8,  4 },
+    { ISD::ZERO_EXTEND, MVT::v2i32,  MVT::v2i16,  1 },
+    { ISD::SIGN_EXTEND, MVT::v2i32,  MVT::v2i16,  1 },
+    { ISD::ZERO_EXTEND, MVT::v2i64,  MVT::v2i16,  1 },
+    { ISD::SIGN_EXTEND, MVT::v2i64,  MVT::v2i16,  1 },
+    { ISD::ZERO_EXTEND, MVT::v4i32,  MVT::v4i16,  1 },
+    { ISD::SIGN_EXTEND, MVT::v4i32,  MVT::v4i16,  1 },
+    { ISD::ZERO_EXTEND, MVT::v8i32,  MVT::v8i16,  2 },
+    { ISD::SIGN_EXTEND, MVT::v8i32,  MVT::v8i16,  2 },
+    { ISD::ZERO_EXTEND, MVT::v16i32, MVT::v16i16, 4 },
+    { ISD::SIGN_EXTEND, MVT::v16i32, MVT::v16i16, 4 },
+    { ISD::ZERO_EXTEND, MVT::v2i64,  MVT::v2i32,  1 },
+    { ISD::SIGN_EXTEND, MVT::v2i64,  MVT::v2i32,  1 },
 
     // These truncates end up widening elements.
     { ISD::TRUNCATE,    MVT::v2i1,   MVT::v2i8,   1 }, // PMOVXZBQ
@@ -2053,10 +2057,6 @@ InstructionCost X86TTIImpl::getCastInstrCost(unsigned Opcode, Type *Dst,
     { ISD::SINT_TO_FP,  MVT::f64,    MVT::i32,    1 },
     { ISD::SINT_TO_FP,  MVT::f32,    MVT::i64,    1 },
     { ISD::SINT_TO_FP,  MVT::f64,    MVT::i64,    1 },
-    { ISD::SINT_TO_FP,  MVT::v4f32,  MVT::v16i8,  1 },
-    { ISD::SINT_TO_FP,  MVT::v2f64,  MVT::v16i8,  1 },
-    { ISD::SINT_TO_FP,  MVT::v4f32,  MVT::v8i16,  1 },
-    { ISD::SINT_TO_FP,  MVT::v2f64,  MVT::v8i16,  1 },
     { ISD::SINT_TO_FP,  MVT::v4f32,  MVT::v4i32,  1 },
     { ISD::SINT_TO_FP,  MVT::v2f64,  MVT::v4i32,  1 },
     { ISD::SINT_TO_FP,  MVT::v4f64,  MVT::v4i32,  2 },
@@ -2065,26 +2065,13 @@ InstructionCost X86TTIImpl::getCastInstrCost(unsigned Opcode, Type *Dst,
     { ISD::UINT_TO_FP,  MVT::f64,    MVT::i32,    1 },
     { ISD::UINT_TO_FP,  MVT::f32,    MVT::i64,    4 },
     { ISD::UINT_TO_FP,  MVT::f64,    MVT::i64,    4 },
-    { ISD::UINT_TO_FP,  MVT::v4f32,  MVT::v16i8,  1 },
-    { ISD::UINT_TO_FP,  MVT::v2f64,  MVT::v16i8,  1 },
-    { ISD::UINT_TO_FP,  MVT::v4f32,  MVT::v8i16,  1 },
-    { ISD::UINT_TO_FP,  MVT::v2f64,  MVT::v8i16,  1 },
-    { ISD::UINT_TO_FP,  MVT::v2f32,  MVT::v2i32,  3 },
-    { ISD::UINT_TO_FP,  MVT::v4f32,  MVT::v4i32,  3 },
-    { ISD::UINT_TO_FP,  MVT::v2f64,  MVT::v4i32,  2 },
     { ISD::UINT_TO_FP,  MVT::v4f32,  MVT::v2i64, 12 },
     { ISD::UINT_TO_FP,  MVT::v4f32,  MVT::v4i64, 22 },
     { ISD::UINT_TO_FP,  MVT::v2f64,  MVT::v2i64,  4 },
 
-    { ISD::FP_TO_SINT,  MVT::i32,    MVT::f32,    1 },
-    { ISD::FP_TO_SINT,  MVT::i64,    MVT::f32,    1 },
-    { ISD::FP_TO_SINT,  MVT::i32,    MVT::f64,    1 },
-    { ISD::FP_TO_SINT,  MVT::i64,    MVT::f64,    1 },
     { ISD::FP_TO_SINT,  MVT::v2i8,   MVT::v2f32,  3 },
     { ISD::FP_TO_SINT,  MVT::v2i8,   MVT::v2f64,  3 },
 
-    { ISD::FP_TO_UINT,  MVT::i32,    MVT::f32,    1 },
-    { ISD::FP_TO_UINT,  MVT::i32,    MVT::f64,    1 },
     { ISD::FP_TO_UINT,  MVT::v2i8,   MVT::v2f32,  3 },
     { ISD::FP_TO_UINT,  MVT::v2i8,   MVT::v2f64,  3 },
     { ISD::FP_TO_UINT,  MVT::v4i16,  MVT::v4f32,  2 },
@@ -2115,16 +2102,11 @@ InstructionCost X86TTIImpl::getCastInstrCost(unsigned Opcode, Type *Dst,
     { ISD::UINT_TO_FP,  MVT::v4f32,  MVT::v16i8,  4 },
     { ISD::UINT_TO_FP,  MVT::v4f32,  MVT::v8i16,  4 },
     { ISD::UINT_TO_FP,  MVT::v2f64,  MVT::v8i16,  4 },
-    { ISD::UINT_TO_FP,  MVT::v2f32,  MVT::v2i32,  7 },
     { ISD::UINT_TO_FP,  MVT::v2f64,  MVT::v4i32,  7 },
     { ISD::UINT_TO_FP,  MVT::v4f32,  MVT::v4i32,  5 },
     { ISD::UINT_TO_FP,  MVT::v2f64,  MVT::v2i64, 15 },
     { ISD::UINT_TO_FP,  MVT::v4f32,  MVT::v2i64, 18 },
 
-    { ISD::FP_TO_SINT,  MVT::i32,    MVT::f32,    4 },
-    { ISD::FP_TO_SINT,  MVT::i64,    MVT::f32,    4 },
-    { ISD::FP_TO_SINT,  MVT::i32,    MVT::f64,    4 },
-    { ISD::FP_TO_SINT,  MVT::i64,    MVT::f64,    4 },
     { ISD::FP_TO_SINT,  MVT::v2i8,   MVT::v2f32,  4 },
     { ISD::FP_TO_SINT,  MVT::v2i16,  MVT::v2f32,  2 },
     { ISD::FP_TO_SINT,  MVT::v4i8,   MVT::v4f32,  3 },
@@ -2133,9 +2115,7 @@ InstructionCost X86TTIImpl::getCastInstrCost(unsigned Opcode, Type *Dst,
     { ISD::FP_TO_SINT,  MVT::v2i8,   MVT::v2f64,  4 },
     { ISD::FP_TO_SINT,  MVT::v2i32,  MVT::v2f64,  1 },
 
-    { ISD::FP_TO_UINT,  MVT::i32,    MVT::f32,    4 },
     { ISD::FP_TO_UINT,  MVT::i64,    MVT::f32,    4 },
-    { ISD::FP_TO_UINT,  MVT::i32,    MVT::f64,    4 },
     { ISD::FP_TO_UINT,  MVT::i64,    MVT::f64,   15 },
     { ISD::FP_TO_UINT,  MVT::v2i8,   MVT::v2f32,  4 },
     { ISD::FP_TO_UINT,  MVT::v2i8,   MVT::v2f64,  4 },
@@ -2145,18 +2125,30 @@ InstructionCost X86TTIImpl::getCastInstrCost(unsigned Opcode, Type *Dst,
     { ISD::FP_TO_UINT,  MVT::v4i16,  MVT::v4f32,  4 },
     { ISD::FP_TO_UINT,  MVT::v4i32,  MVT::v4f32,  8 },
 
-    { ISD::ZERO_EXTEND, MVT::v2i64,  MVT::v16i8,  4 },
-    { ISD::SIGN_EXTEND, MVT::v2i64,  MVT::v16i8,  4 },
-    { ISD::ZERO_EXTEND, MVT::v4i32,  MVT::v16i8,  2 },
-    { ISD::SIGN_EXTEND, MVT::v4i32,  MVT::v16i8,  3 },
-    { ISD::ZERO_EXTEND, MVT::v8i16,  MVT::v16i8,  1 },
-    { ISD::SIGN_EXTEND, MVT::v8i16,  MVT::v16i8,  2 },
-    { ISD::ZERO_EXTEND, MVT::v2i64,  MVT::v8i16,  2 },
-    { ISD::SIGN_EXTEND, MVT::v2i64,  MVT::v8i16,  3 },
-    { ISD::ZERO_EXTEND, MVT::v4i32,  MVT::v8i16,  1 },
-    { ISD::SIGN_EXTEND, MVT::v4i32,  MVT::v8i16,  2 },
-    { ISD::ZERO_EXTEND, MVT::v2i64,  MVT::v4i32,  1 },
-    { ISD::SIGN_EXTEND, MVT::v2i64,  MVT::v4i32,  2 },
+    { ISD::ZERO_EXTEND, MVT::v4i16,  MVT::v4i8,   1 },
+    { ISD::SIGN_EXTEND, MVT::v4i16,  MVT::v4i8,   6 },
+    { ISD::ZERO_EXTEND, MVT::v4i32,  MVT::v4i8,   2 },
+    { ISD::SIGN_EXTEND, MVT::v4i32,  MVT::v4i8,   3 },
+    { ISD::ZERO_EXTEND, MVT::v4i64,  MVT::v4i8,   4 },
+    { ISD::SIGN_EXTEND, MVT::v4i64,  MVT::v4i8,   8 },
+    { ISD::ZERO_EXTEND, MVT::v8i16,  MVT::v8i8,   1 },
+    { ISD::SIGN_EXTEND, MVT::v8i16,  MVT::v8i8,   2 },
+    { ISD::ZERO_EXTEND, MVT::v8i32,  MVT::v8i8,   6 },
+    { ISD::SIGN_EXTEND, MVT::v8i32,  MVT::v8i8,   6 },
+    { ISD::ZERO_EXTEND, MVT::v16i16, MVT::v16i8,  3 },
+    { ISD::SIGN_EXTEND, MVT::v16i16, MVT::v16i8,  4 },
+    { ISD::ZERO_EXTEND, MVT::v16i32, MVT::v16i8,  9 },
+    { ISD::SIGN_EXTEND, MVT::v16i32, MVT::v16i8, 12 },
+    { ISD::ZERO_EXTEND, MVT::v4i32,  MVT::v4i16,  1 },
+    { ISD::SIGN_EXTEND, MVT::v4i32,  MVT::v4i16,  2 },
+    { ISD::ZERO_EXTEND, MVT::v4i64,  MVT::v4i16,  3 },
+    { ISD::SIGN_EXTEND, MVT::v4i64,  MVT::v4i16, 10 },
+    { ISD::ZERO_EXTEND, MVT::v8i32,  MVT::v8i16,  3 },
+    { ISD::SIGN_EXTEND, MVT::v8i32,  MVT::v8i16,  4 },
+    { ISD::ZERO_EXTEND, MVT::v16i32, MVT::v16i16, 6 },
+    { ISD::SIGN_EXTEND, MVT::v16i32, MVT::v16i16, 8 },
+    { ISD::ZERO_EXTEND, MVT::v4i64,  MVT::v4i32,  3 },
+    { ISD::SIGN_EXTEND, MVT::v4i64,  MVT::v4i32,  5 },
 
     // These truncates are really widening elements.
     { ISD::TRUNCATE,    MVT::v2i1,   MVT::v2i32,  1 }, // PSHUFD
@@ -3737,7 +3729,12 @@ InstructionCost X86TTIImpl::getAddressComputationCost(Type *Ty,
 
 InstructionCost
 X86TTIImpl::getArithmeticReductionCost(unsigned Opcode, VectorType *ValTy,
+                                       bool IsPairwise,
                                        TTI::TargetCostKind CostKind) {
+  // Just use the default implementation for pair reductions.
+  if (IsPairwise)
+    return BaseT::getArithmeticReductionCost(Opcode, ValTy, IsPairwise, CostKind);
+
   // We use the Intel Architecture Code Analyzer(IACA) to measure the throughput
   // and make it as the cost.
 
@@ -3808,7 +3805,7 @@ X86TTIImpl::getArithmeticReductionCost(unsigned Opcode, VectorType *ValTy,
     return getCastInstrCost(Instruction::ZExt, WideVecTy, ValTy,
                             TargetTransformInfo::CastContextHint::None,
                             CostKind) +
-           getArithmeticReductionCost(Opcode, WideVecTy, CostKind);
+           getArithmeticReductionCost(Opcode, WideVecTy, IsPairwise, CostKind);
   }
 
   InstructionCost ArithmeticCost = 0;
@@ -3904,7 +3901,8 @@ X86TTIImpl::getArithmeticReductionCost(unsigned Opcode, VectorType *ValTy,
       if (const auto *Entry = CostTableLookup(SSE2BoolReduction, ISD, MTy))
         return ArithmeticCost + Entry->Cost;
 
-    return BaseT::getArithmeticReductionCost(Opcode, ValVTy, CostKind);
+    return BaseT::getArithmeticReductionCost(Opcode, ValVTy, IsPairwise,
+                                             CostKind);
   }
 
   unsigned NumVecElts = ValVTy->getNumElements();
@@ -3913,7 +3911,8 @@ X86TTIImpl::getArithmeticReductionCost(unsigned Opcode, VectorType *ValTy,
   // Special case power of 2 reductions where the scalar type isn't changed
   // by type legalization.
   if (!isPowerOf2_32(NumVecElts) || ScalarSize != MTy.getScalarSizeInBits())
-    return BaseT::getArithmeticReductionCost(Opcode, ValVTy, CostKind);
+    return BaseT::getArithmeticReductionCost(Opcode, ValVTy, IsPairwise,
+                                             CostKind);
 
   InstructionCost ReductionCost = 0;
 
@@ -4111,8 +4110,13 @@ InstructionCost X86TTIImpl::getMinMaxCost(Type *Ty, Type *CondTy,
 
 InstructionCost
 X86TTIImpl::getMinMaxReductionCost(VectorType *ValTy, VectorType *CondTy,
-                                   bool IsUnsigned,
+                                   bool IsPairwise, bool IsUnsigned,
                                    TTI::TargetCostKind CostKind) {
+  // Just use the default implementation for pair reductions.
+  if (IsPairwise)
+    return BaseT::getMinMaxReductionCost(ValTy, CondTy, IsPairwise, IsUnsigned,
+                                         CostKind);
+
   std::pair<InstructionCost, MVT> LT = TLI->getTypeLegalizationCost(DL, ValTy);
 
   MVT MTy = LT.second;
@@ -4228,7 +4232,8 @@ X86TTIImpl::getMinMaxReductionCost(VectorType *ValTy, VectorType *CondTy,
   // by type legalization.
   if (!isPowerOf2_32(ValVTy->getNumElements()) ||
       ScalarSize != MTy.getScalarSizeInBits())
-    return BaseT::getMinMaxReductionCost(ValTy, CondTy, IsUnsigned, CostKind);
+    return BaseT::getMinMaxReductionCost(ValTy, CondTy, IsPairwise, IsUnsigned,
+                                         CostKind);
 
   // Now handle reduction with the legal type, taking into account size changes
   // at each level.
@@ -4629,6 +4634,7 @@ InstructionCost X86TTIImpl::getGatherScatterOpCost(
   }
 
   assert(SrcVTy->isVectorTy() && "Unexpected data type for Gather/Scatter");
+  unsigned VF = cast<FixedVectorType>(SrcVTy)->getNumElements();
   PointerType *PtrTy = dyn_cast<PointerType>(Ptr->getType());
   if (!PtrTy && Ptr->getType()->isVectorTy())
     PtrTy = dyn_cast<PointerType>(
@@ -4636,10 +4642,22 @@ InstructionCost X86TTIImpl::getGatherScatterOpCost(
   assert(PtrTy && "Unexpected type for Ptr argument");
   unsigned AddressSpace = PtrTy->getAddressSpace();
 
+  bool Scalarize = false;
   if ((Opcode == Instruction::Load &&
        !isLegalMaskedGather(SrcVTy, Align(Alignment))) ||
       (Opcode == Instruction::Store &&
        !isLegalMaskedScatter(SrcVTy, Align(Alignment))))
+    Scalarize = true;
+  // Gather / Scatter for vector 2 is not profitable on KNL / SKX
+  // Vector-4 of gather/scatter instruction does not exist on KNL.
+  // We can extend it to 8 elements, but zeroing upper bits of
+  // the mask vector will add more instructions. Right now we give the scalar
+  // cost of vector-4 for KNL. TODO: Check, maybe the gather/scatter instruction
+  // is better in the VariableMask case.
+  if (ST->hasAVX512() && (VF == 2 || (VF == 4 && !ST->hasVLX())))
+    Scalarize = true;
+
+  if (Scalarize)
     return getGSScalarCost(Opcode, SrcVTy, VariableMask, Alignment,
                            AddressSpace);
 
@@ -4774,14 +4792,6 @@ bool X86TTIImpl::isLegalMaskedGather(Type *DataTy, Align Alignment) {
   if (auto *DataVTy = dyn_cast<FixedVectorType>(DataTy)) {
     unsigned NumElts = DataVTy->getNumElements();
     if (NumElts == 1)
-      return false;
-    // Gather / Scatter for vector 2 is not profitable on KNL / SKX
-    // Vector-4 of gather/scatter instruction does not exist on KNL.
-    // We can extend it to 8 elements, but zeroing upper bits of
-    // the mask vector will add more instructions. Right now we give the scalar
-    // cost of vector-4 for KNL. TODO: Check, maybe the gather/scatter
-    // instruction is better in the VariableMask case.
-    if (ST->hasAVX512() && (NumElts == 2 || (NumElts == 4 && !ST->hasVLX())))
       return false;
   }
   Type *ScalarTy = DataTy->getScalarType();

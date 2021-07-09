@@ -13,11 +13,7 @@
 
 #include "mlir/Conversion/GPUToNVVM/GPUToNVVMPass.h"
 
-#include "mlir/Conversion/LLVMCommon/ConversionTarget.h"
-#include "mlir/Conversion/LLVMCommon/LoweringOptions.h"
-#include "mlir/Conversion/LLVMCommon/TypeConverter.h"
-#include "mlir/Conversion/MemRefToLLVM/MemRefToLLVM.h"
-#include "mlir/Conversion/StandardToLLVM/ConvertStandardToLLVM.h"
+#include "mlir/Conversion/StandardToLLVM/ConvertStandardToLLVMPass.h"
 #include "mlir/Dialect/GPU/GPUDialect.h"
 #include "mlir/Dialect/GPU/Passes.h"
 #include "mlir/Dialect/LLVMIR/NVVMDialect.h"
@@ -171,7 +167,6 @@ struct LowerGpuOpsToNVVMOpsPass
     (void)applyPatternsAndFoldGreedily(m, std::move(patterns));
 
     populateStdToLLVMConversionPatterns(converter, llvmPatterns);
-    populateMemRefToLLVMConversionPatterns(converter, llvmPatterns);
     populateGpuToNVVMConversionPatterns(converter, llvmPatterns);
     populateGpuWMMAToNVVMConversionPatterns(converter, llvmPatterns);
     LLVMConversionTarget target(getContext());

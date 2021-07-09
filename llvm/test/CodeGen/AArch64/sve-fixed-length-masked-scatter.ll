@@ -562,7 +562,8 @@ define void @masked_scatter_v16f16(<16 x half>* %a, <16 x half*>* %b) #0 {
 ; VBITS_GE_1024-NEXT: ld1h { [[VALS:z[0-9]+]].h }, [[PG0]]/z, [x0]
 ; VBITS_GE_1024-NEXT: ptrue [[PG1:p[0-9]+]].d, vl16
 ; VBITS_GE_1024-NEXT: ld1d { [[PTRS:z[0-9]+]].d }, [[PG1]]/z, [x1]
-; VBITS_GE_1024-NEXT: fcmeq [[MASK:p[0-9]+]].h, [[PG0]]/z, [[VALS]].h, #0.0
+; VBITS_GE_1024-NEXT: mov [[ZERO:z[0-9]+]].h, #0
+; VBITS_GE_1024-NEXT: fcmeq [[MASK:p[0-9]+]].h, [[PG0]]/z, [[VALS]].h, [[ZERO]]
 ; VBITS_GE_1024-NEXT: uunpklo [[UPK1:z[0-9]+]].s, [[VALS]].h
 ; VBITS_GE_1024-NEXT: uunpklo [[UPK2:z[0-9]+]].d, [[UPK1]].s
 ; VBITS_GE_1024-NEXT: st1h { [[UPK2]].d }, [[MASK]], {{\[}}[[PTRS]].d]
@@ -580,7 +581,8 @@ define void @masked_scatter_v32f16(<32 x half>* %a, <32 x half*>* %b) #0 {
 ; VBITS_GE_2048-NEXT: ld1h { [[VALS:z[0-9]+]].h }, [[PG0]]/z, [x0]
 ; VBITS_GE_2048-NEXT: ptrue [[PG1:p[0-9]+]].d, vl32
 ; VBITS_GE_2048-NEXT: ld1d { [[PTRS:z[0-9]+]].d }, [[PG1]]/z, [x1]
-; VBITS_GE_2048-NEXT: fcmeq [[MASK:p[0-9]+]].h, [[PG0]]/z, [[VALS]].h, #0.0
+; VBITS_GE_2048-NEXT: mov [[ZERO:z[0-9]+]].h, #0
+; VBITS_GE_2048-NEXT: fcmeq [[MASK:p[0-9]+]].h, [[PG0]]/z, [[VALS]].h, [[ZERO]]
 ; VBITS_GE_2048-NEXT: uunpklo [[UPK1:z[0-9]+]].s, [[VALS]].h
 ; VBITS_GE_2048-NEXT: uunpklo [[UPK2:z[0-9]+]].d, [[UPK1]].s
 ; VBITS_GE_2048-NEXT: st1h { [[UPK2]].d }, [[MASK]], {{\[}}[[PTRS]].d]
@@ -637,7 +639,8 @@ define void @masked_scatter_v8f32(<8 x float>* %a, <8 x float*>* %b) #0 {
 ; VBITS_GE_512-NEXT: ld1w { [[VALS:z[0-9]+]].s }, [[PG0]]/z, [x0]
 ; VBITS_GE_512-NEXT: ptrue [[PG1:p[0-9]+]].d, vl8
 ; VBITS_GE_512-NEXT: ld1d { [[PTRS:z[0-9]+]].d }, [[PG1]]/z, [x1]
-; VBITS_GE_512-NEXT: fcmeq [[MASK:p[0-9]+]].s, [[PG0]]/z, [[VALS]].s, #0.0
+; VBITS_GE_512-NEXT: mov [[ZERO:z[0-9]+]].s, #0
+; VBITS_GE_512-NEXT: fcmeq [[MASK:p[0-9]+]].s, [[PG0]]/z, [[VALS]].s, [[ZERO]]
 ; VBITS_GE_512-NEXT: uunpklo [[UPK:z[0-9]+]].d, [[VALS]].s
 ; VBITS_GE_512-NEXT: st1w { [[UPK]].d }, [[MASK]], {{\[}}[[PTRS]].d]
 ; VBITS_GE_512-NEXT: ret
@@ -654,7 +657,8 @@ define void @masked_scatter_v16f32(<16 x float>* %a, <16 x float*>* %b) #0 {
 ; VBITS_GE_1024-NEXT: ld1w { [[VALS:z[0-9]+]].s }, [[PG0]]/z, [x0]
 ; VBITS_GE_1024-NEXT: ptrue [[PG1:p[0-9]+]].d, vl16
 ; VBITS_GE_1024-NEXT: ld1d { [[PTRS:z[0-9]+]].d }, [[PG1]]/z, [x1]
-; VBITS_GE_1024-NEXT: fcmeq [[MASK:p[0-9]+]].s, [[PG0]]/z, [[VALS]].s, #0.0
+; VBITS_GE_1024-NEXT: mov [[ZERO:z[0-9]+]].s, #0
+; VBITS_GE_1024-NEXT: fcmeq [[MASK:p[0-9]+]].s, [[PG0]]/z, [[VALS]].s, [[ZERO]]
 ; VBITS_GE_1024-NEXT: uunpklo [[UPK:z[0-9]+]].d, [[VALS]].s
 ; VBITS_GE_1024-NEXT: st1w { [[UPK]].d }, [[MASK]], {{\[}}[[PTRS]].d]
 ; VBITS_GE_1024-NEXT: ret
@@ -671,7 +675,8 @@ define void @masked_scatter_v32f32(<32 x float>* %a, <32 x float*>* %b) #0 {
 ; VBITS_GE_2048-NEXT: ld1w { [[VALS:z[0-9]+]].s }, [[PG0]]/z, [x0]
 ; VBITS_GE_2048-NEXT: ptrue [[PG1:p[0-9]+]].d, vl32
 ; VBITS_GE_2048-NEXT: ld1d { [[PTRS:z[0-9]+]].d }, [[PG1]]/z, [x1]
-; VBITS_GE_2048-NEXT: fcmeq [[MASK:p[0-9]+]].s, [[PG0]]/z, [[VALS]].s, #0.0
+; VBITS_GE_2048-NEXT: mov [[ZERO:z[0-9]+]].s, #0
+; VBITS_GE_2048-NEXT: fcmeq [[MASK:p[0-9]+]].s, [[PG0]]/z, [[VALS]].s, [[ZERO]]
 ; VBITS_GE_2048-NEXT: uunpklo [[UPK:z[0-9]+]].d, [[VALS]].s
 ; VBITS_GE_2048-NEXT: st1w { [[UPK]].d }, [[MASK]], {{\[}}[[PTRS]].d]
 ; VBITS_GE_2048-NEXT: ret
@@ -718,7 +723,8 @@ define void @masked_scatter_v4f64(<4 x double>* %a, <4 x double*>* %b) #0 {
 ; CHECK: ptrue [[PG0:p[0-9]+]].d, vl4
 ; CHECK-NEXT: ld1d { [[VALS:z[0-9]+]].d }, [[PG0]]/z, [x0]
 ; CHECK-NEXT: ld1d { [[PTRS:z[0-9]+]].d }, [[PG0]]/z, [x1]
-; CHECK-NEXT: fcmeq [[MASK:p[0-9]+]].d, [[PG0]]/z, [[VALS]].d, #0.0
+; CHECK-NEXT: mov [[ZERO:z[0-9]+]].d, #0
+; CHECK-NEXT: fcmeq [[MASK:p[0-9]+]].d, [[PG0]]/z, [[VALS]].d, [[ZERO]].d
 ; CHECK-NEXT: st1d { [[VALS]].d }, [[MASK]], {{\[}}[[PTRS]].d]
 ; CHECK-NEXT: ret
   %vals = load <4 x double>, <4 x double>* %a
@@ -733,7 +739,8 @@ define void @masked_scatter_v8f64(<8 x double>* %a, <8 x double*>* %b) #0 {
 ; VBITS_GE_512: ptrue [[PG0:p[0-9]+]].d, vl8
 ; VBITS_GE_512-NEXT: ld1d { [[VALS:z[0-9]+]].d }, [[PG0]]/z, [x0]
 ; VBITS_GE_512-NEXT: ld1d { [[PTRS:z[0-9]+]].d }, [[PG0]]/z, [x1]
-; VBITS_GE_512-NEXT: fcmeq [[MASK:p[0-9]+]].d, [[PG0]]/z, [[VALS]].d, #0.0
+; VBITS_GE_512-NEXT: mov [[ZERO:z[0-9]+]].d, #0
+; VBITS_GE_512-NEXT: fcmeq [[MASK:p[0-9]+]].d, [[PG0]]/z, [[VALS]].d, [[ZERO]]
 ; VBITS_GE_512-NEXT: st1d { [[VALS]].d }, [[MASK]], {{\[}}[[PTRS]].d]
 ; VBITS_GE_512-NEXT: ret
   %vals = load <8 x double>, <8 x double>* %a
@@ -748,7 +755,8 @@ define void @masked_scatter_v16f64(<16 x double>* %a, <16 x double*>* %b) #0 {
 ; VBITS_GE_1024: ptrue [[PG0:p[0-9]+]].d, vl16
 ; VBITS_GE_1024-NEXT: ld1d { [[VALS:z[0-9]+]].d }, [[PG0]]/z, [x0]
 ; VBITS_GE_1024-NEXT: ld1d { [[PTRS:z[0-9]+]].d }, [[PG0]]/z, [x1]
-; VBITS_GE_1024-NEXT: fcmeq [[MASK:p[0-9]+]].d, [[PG0]]/z, [[VALS]].d, #0.0
+; VBITS_GE_1024-NEXT: mov [[ZERO:z[0-9]+]].d, #0
+; VBITS_GE_1024-NEXT: fcmeq [[MASK:p[0-9]+]].d, [[PG0]]/z, [[VALS]].d, [[ZERO]]
 ; VBITS_GE_1024-NEXT: st1d { [[VALS]].d }, [[MASK]], {{\[}}[[PTRS]].d]
 ; VBITS_GE_1024-NEXT: ret
   %vals = load <16 x double>, <16 x double>* %a
@@ -763,7 +771,8 @@ define void @masked_scatter_v32f64(<32 x double>* %a, <32 x double*>* %b) #0 {
 ; VBITS_GE_2048: ptrue [[PG0:p[0-9]+]].d, vl32
 ; VBITS_GE_2048-NEXT: ld1d { [[VALS:z[0-9]+]].d }, [[PG0]]/z, [x0]
 ; VBITS_GE_2048-NEXT: ld1d { [[PTRS:z[0-9]+]].d }, [[PG0]]/z, [x1]
-; VBITS_GE_2048-NEXT: fcmeq [[MASK:p[0-9]+]].d, [[PG0]]/z, [[VALS]].d, #0.0
+; VBITS_GE_2048-NEXT: mov [[ZERO:z[0-9]+]].d, #0
+; VBITS_GE_2048-NEXT: fcmeq [[MASK:p[0-9]+]].d, [[PG0]]/z, [[VALS]].d, [[ZERO]]
 ; VBITS_GE_2048-NEXT: st1d { [[VALS]].d }, [[MASK]], {{\[}}[[PTRS]].d]
 ; VBITS_GE_2048-NEXT: ret
   %vals = load <32 x double>, <32 x double>* %a
@@ -782,7 +791,8 @@ define void @masked_scatter_32b_scaled_sext(<32 x half>* %a, <32 x i32>* %b, hal
 ; VBITS_GE_2048-NEXT: ld1h { [[VALS:z[0-9]+]].h }, [[PG0]]/z, [x0]
 ; VBITS_GE_2048-NEXT: ptrue [[PG1:p[0-9]+]].s, vl32
 ; VBITS_GE_2048-NEXT: ld1w { [[PTRS:z[0-9]+]].s }, [[PG1]]/z, [x1]
-; VBITS_GE_2048-NEXT: fcmeq [[MASK:p[0-9]+]].h, [[PG0]]/z, [[VALS]].h, #0.0
+; VBITS_GE_2048-NEXT: mov [[ZERO:z[0-9]+]].h, #0
+; VBITS_GE_2048-NEXT: fcmeq [[MASK:p[0-9]+]].h, [[PG0]]/z, [[VALS]].h, [[ZERO]]
 ; VBITS_GE_2048-NEXT: uunpklo [[UPK:z[0-9]+]].s, [[VALS]].h
 ; VBITS_GE_2048-NEXT: st1h { [[VALS]].s }, [[MASK]], [x2, [[PTRS]].s, sxtw #1]
 ; VBITS_GE_2048-NEXT: ret
@@ -801,7 +811,8 @@ define void @masked_scatter_32b_scaled_zext(<32 x half>* %a, <32 x i32>* %b, hal
 ; VBITS_GE_2048-NEXT: ld1h { [[VALS:z[0-9]+]].h }, [[PG0]]/z, [x0]
 ; VBITS_GE_2048-NEXT: ptrue [[PG1:p[0-9]+]].s, vl32
 ; VBITS_GE_2048-NEXT: ld1w { [[PTRS:z[0-9]+]].s }, [[PG1]]/z, [x1]
-; VBITS_GE_2048-NEXT: fcmeq [[MASK:p[0-9]+]].h, [[PG0]]/z, [[VALS]].h, #0.0
+; VBITS_GE_2048-NEXT: mov [[ZERO:z[0-9]+]].h, #0
+; VBITS_GE_2048-NEXT: fcmeq [[MASK:p[0-9]+]].h, [[PG0]]/z, [[VALS]].h, [[ZERO]]
 ; VBITS_GE_2048-NEXT: uunpklo [[UPK:z[0-9]+]].s, [[VALS]].h
 ; VBITS_GE_2048-NEXT: st1h { [[VALS]].s }, [[MASK]], [x2, [[PTRS]].s, uxtw #1]
 ; VBITS_GE_2048-NEXT: ret
@@ -820,7 +831,8 @@ define void @masked_scatter_32b_unscaled_sext(<32 x half>* %a, <32 x i32>* %b, i
 ; VBITS_GE_2048-NEXT: ld1h { [[VALS:z[0-9]+]].h }, [[PG0]]/z, [x0]
 ; VBITS_GE_2048-NEXT: ptrue [[PG1:p[0-9]+]].s, vl32
 ; VBITS_GE_2048-NEXT: ld1w { [[PTRS:z[0-9]+]].s }, [[PG1]]/z, [x1]
-; VBITS_GE_2048-NEXT: fcmeq [[MASK:p[0-9]+]].h, [[PG0]]/z, [[VALS]].h, #0.0
+; VBITS_GE_2048-NEXT: mov [[ZERO:z[0-9]+]].h, #0
+; VBITS_GE_2048-NEXT: fcmeq [[MASK:p[0-9]+]].h, [[PG0]]/z, [[VALS]].h, [[ZERO]]
 ; VBITS_GE_2048-NEXT: uunpklo [[UPK:z[0-9]+]].s, [[VALS]].h
 ; VBITS_GE_2048-NEXT: st1h { [[VALS]].s }, [[MASK]], [x2, [[PTRS]].s, sxtw]
 ; VBITS_GE_2048-NEXT: ret
@@ -840,7 +852,8 @@ define void @masked_scatter_32b_unscaled_zext(<32 x half>* %a, <32 x i32>* %b, i
 ; VBITS_GE_2048-NEXT: ld1h { [[VALS:z[0-9]+]].h }, [[PG0]]/z, [x0]
 ; VBITS_GE_2048-NEXT: ptrue [[PG1:p[0-9]+]].s, vl32
 ; VBITS_GE_2048-NEXT: ld1w { [[PTRS:z[0-9]+]].s }, [[PG1]]/z, [x1]
-; VBITS_GE_2048-NEXT: fcmeq [[MASK:p[0-9]+]].h, [[PG0]]/z, [[VALS]].h, #0.0
+; VBITS_GE_2048-NEXT: mov [[ZERO:z[0-9]+]].h, #0
+; VBITS_GE_2048-NEXT: fcmeq [[MASK:p[0-9]+]].h, [[PG0]]/z, [[VALS]].h, [[ZERO]]
 ; VBITS_GE_2048-NEXT: uunpklo [[UPK:z[0-9]+]].s, [[VALS]].h
 ; VBITS_GE_2048-NEXT: st1h { [[VALS]].s }, [[MASK]], [x2, [[PTRS]].s, uxtw]
 ; VBITS_GE_2048-NEXT: ret
@@ -860,7 +873,8 @@ define void @masked_scatter_64b_scaled(<32 x float>* %a, <32 x i64>* %b, float* 
 ; VBITS_GE_2048-NEXT: ld1w { [[VALS:z[0-9]+]].s }, [[PG0]]/z, [x0]
 ; VBITS_GE_2048-NEXT: ptrue [[PG1:p[0-9]+]].d, vl32
 ; VBITS_GE_2048-NEXT: ld1d { [[PTRS:z[0-9]+]].d }, [[PG1]]/z, [x1]
-; VBITS_GE_2048-NEXT: fcmeq [[MASK:p[0-9]+]].s, [[PG0]]/z, [[VALS]].s, #0.0
+; VBITS_GE_2048-NEXT: mov [[ZERO:z[0-9]+]].s, #0
+; VBITS_GE_2048-NEXT: fcmeq [[MASK:p[0-9]+]].s, [[PG0]]/z, [[VALS]].s, [[ZERO]]
 ; VBITS_GE_2048-NEXT: uunpklo [[UPK:z[0-9]+]].d, [[VALS]].s
 ; VBITS_GE_2048-NEXT: st1w { [[VALS]].d }, [[MASK]], [x2, [[PTRS]].d, lsl #2]
 ; VBITS_GE_2048-NEXT: ret
@@ -878,7 +892,8 @@ define void @masked_scatter_64b_unscaled(<32 x float>* %a, <32 x i64>* %b, i8* %
 ; VBITS_GE_2048-NEXT: ld1w { [[VALS:z[0-9]+]].s }, [[PG0]]/z, [x0]
 ; VBITS_GE_2048-NEXT: ptrue [[PG1:p[0-9]+]].d, vl32
 ; VBITS_GE_2048-NEXT: ld1d { [[PTRS:z[0-9]+]].d }, [[PG1]]/z, [x1]
-; VBITS_GE_2048-NEXT: fcmeq [[MASK:p[0-9]+]].s, [[PG0]]/z, [[VALS]].s, #0.0
+; VBITS_GE_2048-NEXT: mov [[ZERO:z[0-9]+]].s, #0
+; VBITS_GE_2048-NEXT: fcmeq [[MASK:p[0-9]+]].s, [[PG0]]/z, [[VALS]].s, [[ZERO]]
 ; VBITS_GE_2048-NEXT: uunpklo [[UPK:z[0-9]+]].d, [[VALS]].s
 ; VBITS_GE_2048-NEXT: st1w { [[VALS]].d }, [[MASK]], [x2, [[PTRS]].d]
 ; VBITS_GE_2048-NEXT: ret
@@ -899,7 +914,8 @@ define void @masked_scatter_vec_plus_reg(<32 x float>* %a, <32 x i8*>* %b, i64 %
 ; VBITS_GE_2048-NEXT: ld1w { [[VALS:z[0-9]+]].s }, [[PG0]]/z, [x0]
 ; VBITS_GE_2048-NEXT: ld1d { [[PTRS:z[0-9]+]].d }, [[PG1]]/z, [x1]
 ; VBITS_GE_2048-NEXT: mov [[OFF:z[0-9]+]].d, x2
-; VBITS_GE_2048-NEXT: fcmeq [[MASK:p[0-9]+]].s, [[PG0]]/z, [[VALS]].s, #0.0
+; VBITS_GE_2048-NEXT: mov [[ZERO:z[0-9]+]].s, #0
+; VBITS_GE_2048-NEXT: fcmeq [[MASK:p[0-9]+]].s, [[PG0]]/z, [[VALS]].s, [[ZERO]]
 ; VBITS_GE_2048-NEXT: add [[PTRS_ADD:z[0-9]+]].d, [[PG1]]/m, [[PTRS]].d, [[OFF]].d
 ; VBITS_GE_2048-NEXT: uunpklo [[UPK:z[0-9]+]].d, [[VALS]].s
 ; VBITS_GE_2048-NEXT: st1w { [[VALS]].d }, [[MASK]], {{\[}}[[PTRS_ADD]].d]
@@ -921,7 +937,8 @@ define void @masked_scatter_vec_plus_imm(<32 x float>* %a, <32 x i8*>* %b) #0 {
 ; VBITS_GE_2048-NEXT: ld1w { [[VALS:z[0-9]+]].s }, [[PG0]]/z, [x0]
 ; VBITS_GE_2048-NEXT: ld1d { [[PTRS:z[0-9]+]].d }, [[PG1]]/z, [x1]
 ; VBITS_GE_2048-NEXT: mov [[OFF:z[0-9]+]].d, #4
-; VBITS_GE_2048-NEXT: fcmeq [[MASK:p[0-9]+]].s, [[PG0]]/z, [[VALS]].s, #0.0
+; VBITS_GE_2048-NEXT: mov [[ZERO:z[0-9]+]].s, #0
+; VBITS_GE_2048-NEXT: fcmeq [[MASK:p[0-9]+]].s, [[PG0]]/z, [[VALS]].s, [[ZERO]]
 ; VBITS_GE_2048-NEXT: add [[PTRS_ADD:z[0-9]+]].d, [[PG1]]/m, [[PTRS]].d, [[OFF]].d
 ; VBITS_GE_2048-NEXT: uunpklo [[UPK:z[0-9]+]].d, [[VALS]].s
 ; VBITS_GE_2048-NEXT: st1w { [[VALS]].d }, [[MASK]], {{\[}}[[PTRS_ADD]].d]

@@ -20,7 +20,6 @@ add_mlir_dialect_library(MLIRLinalg
   MLIRSideEffectInterfaces
   MLIRViewLikeInterface
   MLIRStandard
-  MLIRMath
   MLIRMemRef
   MLIRTensor
   )

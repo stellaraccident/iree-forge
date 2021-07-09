@@ -429,15 +429,12 @@ private:
   Align StructAlign;
   bool IsFinished = false;
 
-  Optional<Align> MaxFrameAlignment;
-
   SmallVector<Field, 8> Fields;
   DenseMap<Value*, unsigned> FieldIndexByKey;
 
 public:
-  FrameTypeBuilder(LLVMContext &Context, DataLayout const &DL,
-                   Optional<Align> MaxFrameAlignment)
-      : DL(DL), Context(Context), MaxFrameAlignment(MaxFrameAlignment) {}
+  FrameTypeBuilder(LLVMContext &Context, DataLayout const &DL)
+      : DL(DL), Context(Context) {}
 
   /// Add a field to this structure for the storage of an `alloca`
   /// instruction.
@@ -488,8 +485,7 @@ public:
 
   /// Add a field to this structure.
   LLVM_NODISCARD FieldIDType addField(Type *Ty, MaybeAlign FieldAlignment,
-                                      bool IsHeader = false,
-                                      bool IsSpillOfValue = false) {
+                                      bool IsHeader = false) {
     assert(!IsFinished && "adding fields to a finished builder");
     assert(Ty && "must provide a type for a field");
 
@@ -504,16 +500,8 @@ public:
 
     // The field alignment might not be the type alignment, but we need
     // to remember the type alignment anyway to build the type.
-    // If we are spilling values we don't need to worry about ABI alignment
-    // concerns.
-    auto ABIAlign = DL.getABITypeAlign(Ty);
-    Align TyAlignment =
-        (IsSpillOfValue && MaxFrameAlignment)
-            ? (*MaxFrameAlignment < ABIAlign ? *MaxFrameAlignment : ABIAlign)
-            : ABIAlign;
-    if (!FieldAlignment) {
-      FieldAlignment = TyAlignment;
-    }
+    Align TyAlignment = DL.getABITypeAlign(Ty);
+    if (!FieldAlignment) FieldAlignment = TyAlignment;
 
     // Lay out header fields immediately.
     uint64_t Offset;
@@ -1101,11 +1089,7 @@ static StructType *buildFrameType(Function &F, coro::Shape &Shape,
     return StructType::create(C, Name);
   }();
 
-  // We will use this value to cap the alignment of spilled values.
-  Optional<Align> MaxFrameAlignment;
-  if (Shape.ABI == coro::ABI::Async)
-    MaxFrameAlignment = Shape.AsyncLowering.getContextAlignment();
-  FrameTypeBuilder B(C, DL, MaxFrameAlignment);
+  FrameTypeBuilder B(C, DL);
 
   AllocaInst *PromiseAlloca = Shape.getPromiseAlloca();
   Optional<FieldIDType> SwitchIndexFieldId;
@@ -1158,8 +1142,7 @@ static StructType *buildFrameType(Function &F, coro::Shape &Shape,
     if (const Argument *A = dyn_cast<Argument>(S.first))
       if (A->hasByValAttr())
         FieldType = FieldType->getPointerElementType();
-    FieldIDType Id =
-        B.addField(FieldType, None, false /*header*/, true /*IsSpillOfValue*/);
+    FieldIDType Id = B.addField(FieldType, None);
     FrameData.setFieldIndex(S.first, Id);
   }
 
@@ -1562,7 +1545,6 @@ static Instruction *insertSpills(const FrameDataInfo &FrameData,
 
   for (auto const &E : FrameData.Spills) {
     Value *Def = E.first;
-    auto SpillAlignment = Align(FrameData.getAlign(Def));
     // Create a store instruction storing the value into the
     // coroutine frame.
     Instruction *InsertPt = nullptr;
@@ -1619,9 +1601,9 @@ static Instruction *insertSpills(const FrameDataInfo &FrameData,
       // instead of the pointer itself.
       auto *Value =
           Builder.CreateLoad(Def->getType()->getPointerElementType(), Def);
-      Builder.CreateAlignedStore(Value, G, SpillAlignment);
+      Builder.CreateStore(Value, G);
     } else {
-      Builder.CreateAlignedStore(Def, G, SpillAlignment);
+      Builder.CreateStore(Def, G);
     }
 
     BasicBlock *CurrentBlock = nullptr;
@@ -1639,9 +1621,9 @@ static Instruction *insertSpills(const FrameDataInfo &FrameData,
         if (NeedToCopyArgPtrValue)
           CurrentReload = GEP;
         else
-          CurrentReload = Builder.CreateAlignedLoad(
+          CurrentReload = Builder.CreateLoad(
               FrameTy->getElementType(FrameData.getFieldIndex(E.first)), GEP,
-              SpillAlignment, E.first->getName() + Twine(".reload"));
+              E.first->getName() + Twine(".reload"));
 
         TinyPtrVector<DbgDeclareInst *> DIs = FindDbgDeclareUses(Def);
         for (DbgDeclareInst *DDI : DIs) {

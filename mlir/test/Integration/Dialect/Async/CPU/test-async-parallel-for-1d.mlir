@@ -4,7 +4,6 @@
 // RUN:               -async-runtime-ref-counting-opt                          \
 // RUN:               -convert-async-to-llvm                                   \
 // RUN:               -convert-scf-to-std                                      \
-// RUN:               -convert-memref-to-llvm                                  \
 // RUN:               -convert-std-to-llvm                                     \
 // RUN: | mlir-cpu-runner                                                      \
 // RUN:  -e entry -entry-point-result=void -O0                                 \
@@ -17,7 +16,6 @@
 // RUN:               -async-runtime-policy-based-ref-counting                 \
 // RUN:               -convert-async-to-llvm                                   \
 // RUN:               -convert-scf-to-std                                      \
-// RUN:               -convert-memref-to-llvm                                  \
 // RUN:               -convert-std-to-llvm                                     \
 // RUN: | mlir-cpu-runner                                                      \
 // RUN:  -e entry -entry-point-result=void -O0                                 \
@@ -33,7 +31,6 @@
 // RUN:               -async-runtime-ref-counting-opt                          \
 // RUN:               -convert-async-to-llvm                                   \
 // RUN:               -convert-scf-to-std                                      \
-// RUN:               -convert-memref-to-llvm                                  \
 // RUN:               -convert-std-to-llvm                                     \
 // RUN: | mlir-cpu-runner                                                      \
 // RUN:  -e entry -entry-point-result=void -O0                                 \

@@ -1713,8 +1713,6 @@ CallingConv Demangler::demangleCallingConvention(StringView &MangledName) {
     return CallingConv::Vectorcall;
   case 'S':
     return CallingConv::Swift;
-  case 'T':
-    return CallingConv::SwiftAsync;
   }
 
   return CallingConv::None;

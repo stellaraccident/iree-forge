@@ -1124,7 +1124,7 @@ StringRef SSANameState::uniqueValueName(StringRef name) {
     while (true) {
       probeName += llvm::utostr(nextConflictID++);
       if (!usedNames.count(probeName)) {
-        name = probeName.str().copy(usedNameAllocator);
+        name = StringRef(probeName).copy(usedNameAllocator);
         break;
       }
       probeName.resize(name.size() + 1);
@@ -1405,7 +1405,7 @@ static void printFloatValue(const APFloat &apValue, raw_ostream &os) {
     apValue.toString(strValue);
 
     // Make sure that we can parse the default form as a float.
-    if (strValue.str().contains('.')) {
+    if (StringRef(strValue).contains('.')) {
       os << strValue;
       return;
     }

@@ -4856,9 +4856,7 @@ static Constant *propagateNaN(Constant *In) {
 /// transforms based on poison/undef/NaN because the operation itself makes no
 /// difference to the result.
 static Constant *simplifyFPOp(ArrayRef<Value *> Ops, FastMathFlags FMF,
-                              const SimplifyQuery &Q,
-                              fp::ExceptionBehavior ExBehavior,
-                              RoundingMode Rounding) {
+                              const SimplifyQuery &Q) {
   // Poison is independent of anything else. It always propagates from an
   // operand to a math result.
   if (any_of(Ops, [](Value *V) { return match(V, m_Poison()); }))
@@ -4877,33 +4875,21 @@ static Constant *simplifyFPOp(ArrayRef<Value *> Ops, FastMathFlags FMF,
     if (FMF.noInfs() && (IsInf || IsUndef))
       return PoisonValue::get(V->getType());
 
-    if (isDefaultFPEnvironment(ExBehavior, Rounding)) {
-      if (IsUndef || IsNan)
-        return propagateNaN(cast<Constant>(V));
-    } else if (ExBehavior != fp::ebStrict) {
-      if (IsNan)
-        return propagateNaN(cast<Constant>(V));
-    }
+    if (IsUndef || IsNan)
+      return propagateNaN(cast<Constant>(V));
   }
   return nullptr;
 }
 
 /// Given operands for an FAdd, see if we can fold the result.  If not, this
 /// returns null.
-static Value *
-SimplifyFAddInst(Value *Op0, Value *Op1, FastMathFlags FMF,
-                 const SimplifyQuery &Q, unsigned MaxRecurse,
-                 fp::ExceptionBehavior ExBehavior = fp::ebIgnore,
-                 RoundingMode Rounding = RoundingMode::NearestTiesToEven) {
-  if (isDefaultFPEnvironment(ExBehavior, Rounding))
-    if (Constant *C = foldOrCommuteConstant(Instruction::FAdd, Op0, Op1, Q))
-      return C;
-
-  if (Constant *C = simplifyFPOp({Op0, Op1}, FMF, Q, ExBehavior, Rounding))
+static Value *SimplifyFAddInst(Value *Op0, Value *Op1, FastMathFlags FMF,
+                               const SimplifyQuery &Q, unsigned MaxRecurse) {
+  if (Constant *C = foldOrCommuteConstant(Instruction::FAdd, Op0, Op1, Q))
     return C;
 
-  if (!isDefaultFPEnvironment(ExBehavior, Rounding))
-    return nullptr;
+  if (Constant *C = simplifyFPOp({Op0, Op1}, FMF, Q))
+    return C;
 
   // fadd X, -0 ==> X
   if (match(Op1, m_NegZeroFP()))
@@ -4944,20 +4930,13 @@ SimplifyFAddInst(Value *Op0, Value *Op1, FastMathFlags FMF,
 
 /// Given operands for an FSub, see if we can fold the result.  If not, this
 /// returns null.
-static Value *
-SimplifyFSubInst(Value *Op0, Value *Op1, FastMathFlags FMF,
-                 const SimplifyQuery &Q, unsigned MaxRecurse,
-                 fp::ExceptionBehavior ExBehavior = fp::ebIgnore,
-                 RoundingMode Rounding = RoundingMode::NearestTiesToEven) {
-  if (isDefaultFPEnvironment(ExBehavior, Rounding))
-    if (Constant *C = foldOrCommuteConstant(Instruction::FSub, Op0, Op1, Q))
-      return C;
-
-  if (Constant *C = simplifyFPOp({Op0, Op1}, FMF, Q, ExBehavior, Rounding))
+static Value *SimplifyFSubInst(Value *Op0, Value *Op1, FastMathFlags FMF,
+                               const SimplifyQuery &Q, unsigned MaxRecurse) {
+  if (Constant *C = foldOrCommuteConstant(Instruction::FSub, Op0, Op1, Q))
     return C;
 
-  if (!isDefaultFPEnvironment(ExBehavior, Rounding))
-    return nullptr;
+  if (Constant *C = simplifyFPOp({Op0, Op1}, FMF, Q))
+    return C;
 
   // fsub X, +0 ==> X
   if (match(Op1, m_PosZeroFP()))
@@ -4997,14 +4976,9 @@ SimplifyFSubInst(Value *Op0, Value *Op1, FastMathFlags FMF,
 }
 
 static Value *SimplifyFMAFMul(Value *Op0, Value *Op1, FastMathFlags FMF,
-                              const SimplifyQuery &Q, unsigned MaxRecurse,
-                              fp::ExceptionBehavior ExBehavior,
-                              RoundingMode Rounding) {
-  if (Constant *C = simplifyFPOp({Op0, Op1}, FMF, Q, ExBehavior, Rounding))
+                              const SimplifyQuery &Q, unsigned MaxRecurse) {
+  if (Constant *C = simplifyFPOp({Op0, Op1}, FMF, Q))
     return C;
-
-  if (!isDefaultFPEnvironment(ExBehavior, Rounding))
-    return nullptr;
 
   // fmul X, 1.0 ==> X
   if (match(Op1, m_FPOne()))
@@ -5035,65 +5009,43 @@ static Value *SimplifyFMAFMul(Value *Op0, Value *Op1, FastMathFlags FMF,
 }
 
 /// Given the operands for an FMul, see if we can fold the result
-static Value *
-SimplifyFMulInst(Value *Op0, Value *Op1, FastMathFlags FMF,
-                 const SimplifyQuery &Q, unsigned MaxRecurse,
-                 fp::ExceptionBehavior ExBehavior = fp::ebIgnore,
-                 RoundingMode Rounding = RoundingMode::NearestTiesToEven) {
-  if (isDefaultFPEnvironment(ExBehavior, Rounding))
-    if (Constant *C = foldOrCommuteConstant(Instruction::FMul, Op0, Op1, Q))
-      return C;
+static Value *SimplifyFMulInst(Value *Op0, Value *Op1, FastMathFlags FMF,
+                               const SimplifyQuery &Q, unsigned MaxRecurse) {
+  if (Constant *C = foldOrCommuteConstant(Instruction::FMul, Op0, Op1, Q))
+    return C;
 
   // Now apply simplifications that do not require rounding.
-  return SimplifyFMAFMul(Op0, Op1, FMF, Q, MaxRecurse, ExBehavior, Rounding);
+  return SimplifyFMAFMul(Op0, Op1, FMF, Q, MaxRecurse);
 }
 
 Value *llvm::SimplifyFAddInst(Value *Op0, Value *Op1, FastMathFlags FMF,
-                              const SimplifyQuery &Q,
-                              fp::ExceptionBehavior ExBehavior,
-                              RoundingMode Rounding) {
-  return ::SimplifyFAddInst(Op0, Op1, FMF, Q, RecursionLimit, ExBehavior,
-                            Rounding);
+                              const SimplifyQuery &Q) {
+  return ::SimplifyFAddInst(Op0, Op1, FMF, Q, RecursionLimit);
 }
 
+
 Value *llvm::SimplifyFSubInst(Value *Op0, Value *Op1, FastMathFlags FMF,
-                              const SimplifyQuery &Q,
-                              fp::ExceptionBehavior ExBehavior,
-                              RoundingMode Rounding) {
-  return ::SimplifyFSubInst(Op0, Op1, FMF, Q, RecursionLimit, ExBehavior,
-                            Rounding);
+                              const SimplifyQuery &Q) {
+  return ::SimplifyFSubInst(Op0, Op1, FMF, Q, RecursionLimit);
 }
 
 Value *llvm::SimplifyFMulInst(Value *Op0, Value *Op1, FastMathFlags FMF,
-                              const SimplifyQuery &Q,
-                              fp::ExceptionBehavior ExBehavior,
-                              RoundingMode Rounding) {
-  return ::SimplifyFMulInst(Op0, Op1, FMF, Q, RecursionLimit, ExBehavior,
-                            Rounding);
+                              const SimplifyQuery &Q) {
+  return ::SimplifyFMulInst(Op0, Op1, FMF, Q, RecursionLimit);
 }
 
 Value *llvm::SimplifyFMAFMul(Value *Op0, Value *Op1, FastMathFlags FMF,
-                             const SimplifyQuery &Q,
-                             fp::ExceptionBehavior ExBehavior,
-                             RoundingMode Rounding) {
-  return ::SimplifyFMAFMul(Op0, Op1, FMF, Q, RecursionLimit, ExBehavior,
-                           Rounding);
+                             const SimplifyQuery &Q) {
+  return ::SimplifyFMAFMul(Op0, Op1, FMF, Q, RecursionLimit);
 }
 
-static Value *
-SimplifyFDivInst(Value *Op0, Value *Op1, FastMathFlags FMF,
-                 const SimplifyQuery &Q, unsigned,
-                 fp::ExceptionBehavior ExBehavior = fp::ebIgnore,
-                 RoundingMode Rounding = RoundingMode::NearestTiesToEven) {
-  if (isDefaultFPEnvironment(ExBehavior, Rounding))
-    if (Constant *C = foldOrCommuteConstant(Instruction::FDiv, Op0, Op1, Q))
-      return C;
-
-  if (Constant *C = simplifyFPOp({Op0, Op1}, FMF, Q, ExBehavior, Rounding))
+static Value *SimplifyFDivInst(Value *Op0, Value *Op1, FastMathFlags FMF,
+                               const SimplifyQuery &Q, unsigned) {
+  if (Constant *C = foldOrCommuteConstant(Instruction::FDiv, Op0, Op1, Q))
     return C;
 
-  if (!isDefaultFPEnvironment(ExBehavior, Rounding))
-    return nullptr;
+  if (Constant *C = simplifyFPOp({Op0, Op1}, FMF, Q))
+    return C;
 
   // X / 1.0 -> X
   if (match(Op1, m_FPOne()))
@@ -5128,27 +5080,17 @@ SimplifyFDivInst(Value *Op0, Value *Op1, FastMathFlags FMF,
 }
 
 Value *llvm::SimplifyFDivInst(Value *Op0, Value *Op1, FastMathFlags FMF,
-                              const SimplifyQuery &Q,
-                              fp::ExceptionBehavior ExBehavior,
-                              RoundingMode Rounding) {
-  return ::SimplifyFDivInst(Op0, Op1, FMF, Q, RecursionLimit, ExBehavior,
-                            Rounding);
+                              const SimplifyQuery &Q) {
+  return ::SimplifyFDivInst(Op0, Op1, FMF, Q, RecursionLimit);
 }
 
-static Value *
-SimplifyFRemInst(Value *Op0, Value *Op1, FastMathFlags FMF,
-                 const SimplifyQuery &Q, unsigned,
-                 fp::ExceptionBehavior ExBehavior = fp::ebIgnore,
-                 RoundingMode Rounding = RoundingMode::NearestTiesToEven) {
-  if (isDefaultFPEnvironment(ExBehavior, Rounding))
-    if (Constant *C = foldOrCommuteConstant(Instruction::FRem, Op0, Op1, Q))
-      return C;
-
-  if (Constant *C = simplifyFPOp({Op0, Op1}, FMF, Q, ExBehavior, Rounding))
+static Value *SimplifyFRemInst(Value *Op0, Value *Op1, FastMathFlags FMF,
+                               const SimplifyQuery &Q, unsigned) {
+  if (Constant *C = foldOrCommuteConstant(Instruction::FRem, Op0, Op1, Q))
     return C;
 
-  if (!isDefaultFPEnvironment(ExBehavior, Rounding))
-    return nullptr;
+  if (Constant *C = simplifyFPOp({Op0, Op1}, FMF, Q))
+    return C;
 
   // Unlike fdiv, the result of frem always matches the sign of the dividend.
   // The constant match may include undef elements in a vector, so return a full
@@ -5166,11 +5108,8 @@ SimplifyFRemInst(Value *Op0, Value *Op1, FastMathFlags FMF,
 }
 
 Value *llvm::SimplifyFRemInst(Value *Op0, Value *Op1, FastMathFlags FMF,
-                              const SimplifyQuery &Q,
-                              fp::ExceptionBehavior ExBehavior,
-                              RoundingMode Rounding) {
-  return ::SimplifyFRemInst(Op0, Op1, FMF, Q, RecursionLimit, ExBehavior,
-                            Rounding);
+                              const SimplifyQuery &Q) {
+  return ::SimplifyFRemInst(Op0, Op1, FMF, Q, RecursionLimit);
 }
 
 //=== Helper functions for higher up the class hierarchy.
@@ -5816,24 +5755,12 @@ static Value *simplifyIntrinsic(CallBase *Call, const SimplifyQuery &Q) {
     }
     return nullptr;
   }
-  case Intrinsic::experimental_constrained_fma: {
-    Value *Op0 = Call->getArgOperand(0);
-    Value *Op1 = Call->getArgOperand(1);
-    Value *Op2 = Call->getArgOperand(2);
-    auto *FPI = cast<ConstrainedFPIntrinsic>(Call);
-    if (Value *V = simplifyFPOp({Op0, Op1, Op2}, {}, Q,
-                                FPI->getExceptionBehavior().getValue(),
-                                FPI->getRoundingMode().getValue()))
-      return V;
-    return nullptr;
-  }
   case Intrinsic::fma:
   case Intrinsic::fmuladd: {
     Value *Op0 = Call->getArgOperand(0);
     Value *Op1 = Call->getArgOperand(1);
     Value *Op2 = Call->getArgOperand(2);
-    if (Value *V = simplifyFPOp({Op0, Op1, Op2}, {}, Q, fp::ebIgnore,
-                                RoundingMode::NearestTiesToEven))
+    if (Value *V = simplifyFPOp({ Op0, Op1, Op2 }, {}, Q))
       return V;
     return nullptr;
   }
@@ -5884,46 +5811,6 @@ static Value *simplifyIntrinsic(CallBase *Call, const SimplifyQuery &Q) {
       return X;
 
     return nullptr;
-  }
-  case Intrinsic::experimental_constrained_fadd: {
-    auto *FPI = cast<ConstrainedFPIntrinsic>(Call);
-    return SimplifyFAddInst(FPI->getArgOperand(0), FPI->getArgOperand(1),
-                            FPI->getFastMathFlags(), Q,
-                            FPI->getExceptionBehavior().getValue(),
-                            FPI->getRoundingMode().getValue());
-    break;
-  }
-  case Intrinsic::experimental_constrained_fsub: {
-    auto *FPI = cast<ConstrainedFPIntrinsic>(Call);
-    return SimplifyFSubInst(FPI->getArgOperand(0), FPI->getArgOperand(1),
-                            FPI->getFastMathFlags(), Q,
-                            FPI->getExceptionBehavior().getValue(),
-                            FPI->getRoundingMode().getValue());
-    break;
-  }
-  case Intrinsic::experimental_constrained_fmul: {
-    auto *FPI = cast<ConstrainedFPIntrinsic>(Call);
-    return SimplifyFMulInst(FPI->getArgOperand(0), FPI->getArgOperand(1),
-                            FPI->getFastMathFlags(), Q,
-                            FPI->getExceptionBehavior().getValue(),
-                            FPI->getRoundingMode().getValue());
-    break;
-  }
-  case Intrinsic::experimental_constrained_fdiv: {
-    auto *FPI = cast<ConstrainedFPIntrinsic>(Call);
-    return SimplifyFDivInst(FPI->getArgOperand(0), FPI->getArgOperand(1),
-                            FPI->getFastMathFlags(), Q,
-                            FPI->getExceptionBehavior().getValue(),
-                            FPI->getRoundingMode().getValue());
-    break;
-  }
-  case Intrinsic::experimental_constrained_frem: {
-    auto *FPI = cast<ConstrainedFPIntrinsic>(Call);
-    return SimplifyFRemInst(FPI->getArgOperand(0), FPI->getArgOperand(1),
-                            FPI->getFastMathFlags(), Q,
-                            FPI->getExceptionBehavior().getValue(),
-                            FPI->getRoundingMode().getValue());
-    break;
   }
   default:
     return nullptr;

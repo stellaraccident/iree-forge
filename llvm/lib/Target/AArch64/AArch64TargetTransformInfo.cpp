@@ -1759,10 +1759,11 @@ bool AArch64TTIImpl::isLegalToVectorizeReduction(
 
 InstructionCost
 AArch64TTIImpl::getMinMaxReductionCost(VectorType *Ty, VectorType *CondTy,
-                                       bool IsUnsigned,
+                                       bool IsPairwise, bool IsUnsigned,
                                        TTI::TargetCostKind CostKind) {
   if (!isa<ScalableVectorType>(Ty))
-    return BaseT::getMinMaxReductionCost(Ty, CondTy, IsUnsigned, CostKind);
+    return BaseT::getMinMaxReductionCost(Ty, CondTy, IsPairwise, IsUnsigned,
+                                         CostKind);
   assert((isa<ScalableVectorType>(Ty) && isa<ScalableVectorType>(CondTy)) &&
          "Both vector needs to be scalable");
 
@@ -1784,7 +1785,10 @@ AArch64TTIImpl::getMinMaxReductionCost(VectorType *Ty, VectorType *CondTy,
 }
 
 InstructionCost AArch64TTIImpl::getArithmeticReductionCostSVE(
-    unsigned Opcode, VectorType *ValTy, TTI::TargetCostKind CostKind) {
+    unsigned Opcode, VectorType *ValTy, bool IsPairwise,
+    TTI::TargetCostKind CostKind) {
+  assert(!IsPairwise && "Cannot be pair wise to continue");
+
   std::pair<InstructionCost, MVT> LT = TLI->getTypeLegalizationCost(DL, ValTy);
   InstructionCost LegalizationCost = 0;
   if (LT.first > 1) {
@@ -1810,9 +1814,15 @@ InstructionCost AArch64TTIImpl::getArithmeticReductionCostSVE(
 
 InstructionCost
 AArch64TTIImpl::getArithmeticReductionCost(unsigned Opcode, VectorType *ValTy,
+                                           bool IsPairwiseForm,
                                            TTI::TargetCostKind CostKind) {
+
   if (isa<ScalableVectorType>(ValTy))
-    return getArithmeticReductionCostSVE(Opcode, ValTy, CostKind);
+    return getArithmeticReductionCostSVE(Opcode, ValTy, IsPairwiseForm,
+                                         CostKind);
+  if (IsPairwiseForm)
+    return BaseT::getArithmeticReductionCost(Opcode, ValTy, IsPairwiseForm,
+                                             CostKind);
 
   std::pair<InstructionCost, MVT> LT = TLI->getTypeLegalizationCost(DL, ValTy);
   MVT MTy = LT.second;
@@ -1884,7 +1894,8 @@ AArch64TTIImpl::getArithmeticReductionCost(unsigned Opcode, VectorType *ValTy,
     }
     break;
   }
-  return BaseT::getArithmeticReductionCost(Opcode, ValTy, CostKind);
+  return BaseT::getArithmeticReductionCost(Opcode, ValTy, IsPairwiseForm,
+                                           CostKind);
 }
 
 InstructionCost AArch64TTIImpl::getSpliceCost(VectorType *Tp, int Index) {

@@ -229,7 +229,7 @@ isl::union_set polly::shiftDim(isl::union_set USet, int Pos, int Amount) {
   isl::union_set Result = isl::union_set::empty(USet.get_space());
   for (isl::set Set : USet.get_set_list()) {
     isl::set Shifted = shiftDim(Set, Pos, Amount);
-    Result = Result.unite(Shifted);
+    Result = Result.add_set(Shifted);
   }
   return Result;
 }
@@ -548,7 +548,7 @@ isl::val polly::getConstant(isl::pw_aff PwAff, bool Max, bool Min) {
         // TODO: If Min/Max, we can also determine a minimum/maximum value if
         // Set is constant-bounded.
         if (!Aff.is_cst()) {
-          Result = isl::val::nan(Aff.ctx());
+          Result = isl::val::nan(Aff.get_ctx());
           return isl::stat::error();
         }
 
@@ -572,7 +572,7 @@ isl::val polly::getConstant(isl::pw_aff PwAff, bool Max, bool Min) {
         }
 
         // Not compatible
-        Result = isl::val::nan(Aff.ctx());
+        Result = isl::val::nan(Aff.get_ctx());
         return isl::stat::error();
       });
 
@@ -827,7 +827,7 @@ static isl::union_set expand(const isl::union_set &USet) {
   isl::union_set Expanded = isl::union_set::empty(USet.get_space());
   for (isl::set Set : USet.get_set_list()) {
     isl::set SetExpanded = expand(Set);
-    Expanded = Expanded.unite(SetExpanded);
+    Expanded = Expanded.add_set(SetExpanded);
   }
   return Expanded;
 }

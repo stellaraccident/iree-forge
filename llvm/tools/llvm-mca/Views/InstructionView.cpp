@@ -28,15 +28,14 @@ StringRef InstructionView::printInstructionString(const llvm::MCInst &MCI) const
 }
 
 json::Value InstructionView::toJSON() const {
+  json::Object JO;
   json::Array SourceInfo;
   for (const auto &MCI : getSource()) {
     StringRef Instruction = printInstructionString(MCI);
     SourceInfo.push_back(Instruction.str());
   }
-  return SourceInfo;
-}
+  JO.try_emplace("Instructions", std::move(SourceInfo));
 
-json::Object InstructionView::getJSONResources() const {
   json::Array Resources;
   const MCSchedModel &SM = STI.getSchedModel();
   for (unsigned I = 1, E = SM.getNumProcResourceKinds(); I < E; ++I) {
@@ -53,7 +52,9 @@ json::Object InstructionView::getJSONResources() const {
       Resources.push_back(ResNameStream.str());
     }
   }
-  return json::Object({{"CPUName", MCPU}, {"Resources", std::move(Resources)}});
+  JO.try_emplace("Resources", json::Object({{"CPUName", MCPU}, {"Resources", std::move(Resources)}}));
+
+  return JO;
 }
 } // namespace mca
 } // namespace llvm

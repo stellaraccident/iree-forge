@@ -175,7 +175,8 @@ extractSystemIncludesAndTarget(llvm::SmallString<128> Driver,
   auto CleanUp = llvm::make_scope_exit(
       [&StdErrPath]() { llvm::sys::fs::remove(StdErrPath); });
 
-  llvm::Optional<llvm::StringRef> Redirects[] = {{""}, {""}, StdErrPath.str()};
+  llvm::Optional<llvm::StringRef> Redirects[] = {
+      {""}, {""}, llvm::StringRef(StdErrPath)};
 
   llvm::SmallVector<llvm::StringRef> Args = {Driver, "-E", "-x",
                                              Lang,   "-",  "-v"};

@@ -1332,12 +1332,12 @@ Sema::ActOnFinishSwitchStmt(SourceLocation SwitchLoc, Stmt *Switch,
           if (PrevString == CurrString)
             Diag(CaseVals[i].second->getLHS()->getBeginLoc(),
                  diag::err_duplicate_case)
-                << (PrevString.empty() ? CaseValStr.str() : PrevString);
+                << (PrevString.empty() ? StringRef(CaseValStr) : PrevString);
           else
             Diag(CaseVals[i].second->getLHS()->getBeginLoc(),
                  diag::err_duplicate_case_differing_expr)
-                << (PrevString.empty() ? CaseValStr.str() : PrevString)
-                << (CurrString.empty() ? CaseValStr.str() : CurrString)
+                << (PrevString.empty() ? StringRef(CaseValStr) : PrevString)
+                << (CurrString.empty() ? StringRef(CaseValStr) : CurrString)
                 << CaseValStr;
 
           Diag(CaseVals[i - 1].second->getLHS()->getBeginLoc(),
@@ -3333,13 +3333,8 @@ Sema::NamedReturnInfo Sema::getNamedReturnInfo(Expr *&E, bool ForceCXX2b) {
   if (!VD)
     return NamedReturnInfo();
   NamedReturnInfo Res = getNamedReturnInfo(VD);
-  // FIXME: We supress simpler implicit move here (unless ForceCXX2b is true)
-  //        in msvc compatibility mode just as a temporary work around,
-  //        as the MSVC STL has issues with this change.
-  //        We will come back later with a more targeted approach.
   if (Res.Candidate && !E->isXValue() &&
-      (ForceCXX2b ||
-       (getLangOpts().CPlusPlus2b && !getLangOpts().MSVCCompat))) {
+      (ForceCXX2b || getLangOpts().CPlusPlus2b)) {
     E = ImplicitCastExpr::Create(Context, VD->getType().getNonReferenceType(),
                                  CK_NoOp, E, nullptr, VK_XValue,
                                  FPOptionsOverride());

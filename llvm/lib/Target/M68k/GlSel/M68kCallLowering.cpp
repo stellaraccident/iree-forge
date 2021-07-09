@@ -68,7 +68,7 @@ bool M68kCallLowering::lowerReturn(MachineIRBuilder &MIRBuilder,
   auto &DL = F.getParent()->getDataLayout();
   if (!VRegs.empty()) {
     SmallVector<ArgInfo, 8> SplitArgs;
-    ArgInfo OrigArg{VRegs, Val->getType(), 0};
+    ArgInfo OrigArg{VRegs, Val->getType()};
     setArgFlags(OrigArg, AttributeList::ReturnIndex, DL, F);
     splitToValueTypes(OrigArg, SplitArgs, DL, F.getCallingConv());
     OutgoingValueAssigner ArgAssigner(AssignFn);
@@ -93,7 +93,7 @@ bool M68kCallLowering::lowerFormalArguments(MachineIRBuilder &MIRBuilder,
   SmallVector<ArgInfo, 8> SplitArgs;
   unsigned I = 0;
   for (const auto &Arg : F.args()) {
-    ArgInfo OrigArg{VRegs[I], Arg.getType(), I};
+    ArgInfo OrigArg{VRegs[I], Arg.getType()};
     setArgFlags(OrigArg, I + AttributeList::FirstArgIndex, DL, F);
     splitToValueTypes(OrigArg, SplitArgs, DL, F.getCallingConv());
     ++I;

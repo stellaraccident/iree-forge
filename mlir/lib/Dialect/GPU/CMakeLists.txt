@@ -16,25 +16,8 @@ if (MLIR_ENABLE_ROCM_CONVERSIONS)
   )
 endif()
 
-add_mlir_dialect_library(MLIRGPUOps
+add_mlir_dialect_library(MLIRGPU
   IR/GPUDialect.cpp
-
-  ADDITIONAL_HEADER_DIRS
-  ${MLIR_MAIN_INCLUDE_DIR}/mlir/Dialect/GPU
-
-  DEPENDS
-  MLIRGPUOpsIncGen
-  MLIRGPUOpInterfacesIncGen
-
-  LINK_LIBS PUBLIC
-  MLIRDLTI
-  MLIRIR
-  MLIRMemRef
-  MLIRSideEffectInterfaces
-  MLIRSupport
-  )
-
-add_mlir_dialect_library(MLIRGPUTransforms
   Transforms/AllReduceLowering.cpp
   Transforms/AsyncRegionRewriter.cpp
   Transforms/KernelOutlining.cpp
@@ -54,6 +37,8 @@ add_mlir_dialect_library(MLIRGPUTransforms
   ${AMDGPU_LIBS}
 
   DEPENDS
+  MLIRGPUOpsIncGen
+  MLIRGPUOpInterfacesIncGen
   MLIRGPUPassIncGen
   MLIRParallelLoopMapperAttrGen
   MLIRParallelLoopMapperEnumsGen
@@ -61,13 +46,14 @@ add_mlir_dialect_library(MLIRGPUTransforms
   LINK_LIBS PUBLIC
   MLIRAsync
   MLIRDataLayoutInterfaces
-  MLIRGPUOps
+  MLIRDLTI
   MLIRIR
+  MLIRMemRef
   MLIRLLVMIR
   MLIRLLVMToLLVMIRTranslation
-  MLIRMemRef
-  MLIRPass
   MLIRSCF
+  MLIRPass
+  MLIRSideEffectInterfaces
   MLIRStandard
   MLIRSupport
   MLIRTransformUtils
@@ -91,20 +77,20 @@ if(MLIR_ENABLE_CUDA_RUNNER)
   endif()
 
   # Enable gpu-to-cubin pass.
-  target_compile_definitions(obj.MLIRGPUTransforms
+  target_compile_definitions(obj.MLIRGPU
     PRIVATE
     MLIR_GPU_TO_CUBIN_PASS_ENABLE=1
   )
 
   # Add CUDA headers includes and the libcuda.so library.
-  target_include_directories(obj.MLIRGPUTransforms
+  target_include_directories(obj.MLIRGPU
     PRIVATE
     ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}
   )
 
   find_library(CUDA_DRIVER_LIBRARY cuda)
 
-  target_link_libraries(MLIRGPUTransforms
+  target_link_libraries(MLIRGPU
     PRIVATE
     MLIRNVVMToLLVMIRTranslation
     ${CUDA_DRIVER_LIBRARY}
@@ -140,21 +126,21 @@ if(MLIR_ENABLE_ROCM_RUNNER)
     message(STATUS "ROCm HIP version: ${HIP_VERSION}")
   endif()
 
-  target_compile_definitions(obj.MLIRGPUOps
+  target_compile_definitions(obj.MLIRGPU
     PRIVATE
     __HIP_PLATFORM_HCC__
     __ROCM_PATH__="${ROCM_PATH}"
     MLIR_GPU_TO_HSACO_PASS_ENABLE=1
   )
 
-  target_include_directories(obj.MLIRGPUOps
+  target_include_directories(obj.MLIRGPU
     PRIVATE
     ${MLIR_SOURCE_DIR}/../lld/include
     ${HIP_PATH}/include
     ${ROCM_PATH}/include
   )
 
-  target_link_libraries(MLIRGPUOps
+  target_link_libraries(MLIRGPU
     PRIVATE
     lldELF
     MLIRROCDLToLLVMIRTranslation

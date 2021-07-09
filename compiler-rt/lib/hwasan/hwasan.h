@@ -102,7 +102,7 @@ extern bool hwasan_init_is_running;
 extern int hwasan_report_count;
 
 bool InitShadow();
-void InitializeOsSupport();
+void InitPrctl();
 void InitThreads();
 void InitializeInterceptors();
 

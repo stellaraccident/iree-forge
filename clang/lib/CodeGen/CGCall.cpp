@@ -66,7 +66,6 @@ unsigned CodeGenTypes::ClangCallConvToLLVMCallConv(CallingConv CC) {
   case CC_PreserveMost: return llvm::CallingConv::PreserveMost;
   case CC_PreserveAll: return llvm::CallingConv::PreserveAll;
   case CC_Swift: return llvm::CallingConv::Swift;
-  case CC_SwiftAsync: return llvm::CallingConv::SwiftTail;
   }
 }
 
@@ -774,7 +773,7 @@ CodeGenTypes::arrangeLLVMFunctionInfo(CanQualType resultType,
     // Force target independent argument handling for the host visible
     // kernel functions.
     computeSPIRKernelABIInfo(CGM, *FI);
-  } else if (info.getCC() == CC_Swift || info.getCC() == CC_SwiftAsync) {
+  } else if (info.getCC() == CC_Swift) {
     swiftcall::computeABIInfo(CGM, *FI);
   } else {
     getABIInfo().computeInfo(*FI);
@@ -1013,8 +1012,8 @@ static void forConstantArrayExpansion(CodeGenFunction &CGF,
     BaseAddr.getAlignment().alignmentOfArrayElement(EltSize);
 
   for (int i = 0, n = CAE->NumElts; i < n; i++) {
-    llvm::Value *EltAddr = CGF.Builder.CreateConstGEP2_32(
-        BaseAddr.getElementType(), BaseAddr.getPointer(), 0, i);
+    llvm::Value *EltAddr =
+      CGF.Builder.CreateConstGEP2_32(nullptr, BaseAddr.getPointer(), 0, i);
     Fn(Address(EltAddr, EltAlign));
   }
 }
@@ -3438,8 +3437,7 @@ void CodeGenFunction::EmitFunctionEpilog(const CGFunctionInfo &FI,
       --EI;
       llvm::Value *ArgStruct = &*EI;
       llvm::Value *SRet = Builder.CreateStructGEP(
-          EI->getType()->getPointerElementType(), ArgStruct,
-          RetAI.getInAllocaFieldIndex());
+          nullptr, ArgStruct, RetAI.getInAllocaFieldIndex());
       llvm::Type *Ty =
           cast<llvm::GetElementPtrInst>(SRet)->getResultElementType();
       RV = Builder.CreateAlignedLoad(Ty, SRet, getPointerAlign(), "sret");
@@ -4030,11 +4028,11 @@ void CodeGenFunction::EmitNonNullArgCheck(RValue RV, QualType ArgType,
 // later, so we can't check it directly.
 static bool hasInAllocaArgs(CodeGenModule &CGM, CallingConv ExplicitCC,
                             ArrayRef<QualType> ArgTypes) {
-  // The Swift calling conventions don't go through the target-specific
-  // argument classification, they never use inalloca.
+  // The Swift calling convention doesn't go through the target-specific
+  // argument classification, so it never uses inalloca.
   // TODO: Consider limiting inalloca use to only calling conventions supported
   // by MSVC.
-  if (ExplicitCC == CC_Swift || ExplicitCC == CC_SwiftAsync)
+  if (ExplicitCC == CC_Swift)
     return false;
   if (!CGM.getTarget().getCXXABI().isMicrosoft())
     return false;

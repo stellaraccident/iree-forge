@@ -124,7 +124,7 @@ def InferShapedTypeOpInterface : OpInterface<"InferShapedTypeOpInterface"> {
       /*methodName=*/"reifyReturnTypeShapes",
       /*args=*/(ins "::mlir::OpBuilder&":$builder,
           "::mlir::ValueRange":$operands,
-          "::mlir::SmallVectorImpl<::mlir::Value> &":$reifiedReturnShapes),
+          "::mlir::SmallVectorImpl<Value> &":$reifiedReturnShapes),
       /*methodBody=*/[{}],
       /*defaultImplementation=*/[{ return ::mlir::failure(); }]
     >,
@@ -151,7 +151,7 @@ def InferShapedTypeOpInterface : OpInterface<"InferShapedTypeOpInterface"> {
       /*retTy=*/"::mlir::LogicalResult",
       /*methodName=*/"reifyReturnTypeShapesPerResultDim",
       /*args=*/(ins "::mlir::OpBuilder&":$builder,
-          "::mlir::SmallVectorImpl<::mlir::SmallVector<::mlir::Value>>&"
+          "::mlir::SmallVectorImpl<SmallVector<::mlir::Value>>&"
           :$reifiedReturnShapes),
       /*methodBody=*/[{}],
       /*defaultImplementation=*/[{ return ::mlir::failure(); }]

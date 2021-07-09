@@ -2,14 +2,12 @@
 // REQUIRES: riscv-registered-target
 // RUN: %clang_cc1 -triple riscv32 -target-feature +f -target-feature +d \
 // RUN:   -target-feature +experimental-v -target-feature +experimental-zfh \
-// RUN:   -target-feature +experimental-zvlsseg -disable-O0-optnone \
-// RUN:   -fallow-half-arguments-and-returns -emit-llvm %s -o - \
-// RUN:   | opt -S -mem2reg | FileCheck --check-prefix=CHECK-RV32 %s
+// RUN:   -disable-O0-optnone -fallow-half-arguments-and-returns -emit-llvm %s \
+// RUN:   -o - | opt -S -mem2reg | FileCheck --check-prefix=CHECK-RV32 %s
 // RUN: %clang_cc1 -triple riscv64 -target-feature +f -target-feature +d \
 // RUN:   -target-feature +experimental-v -target-feature +experimental-zfh \
-// RUN:   -target-feature +experimental-zvlsseg -disable-O0-optnone \
-// RUN:   -fallow-half-arguments-and-returns -emit-llvm %s -o - \
-// RUN:   | opt -S -mem2reg | FileCheck --check-prefix=CHECK-RV64 %s
+// RUN:   -disable-O0-optnone -fallow-half-arguments-and-returns -emit-llvm %s \
+// RUN:   -o - | opt -S -mem2reg | FileCheck --check-prefix=CHECK-RV64 %s
 
 #include <riscv_vector.h>
 

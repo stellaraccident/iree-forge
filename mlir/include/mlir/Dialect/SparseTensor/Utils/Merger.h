@@ -168,13 +168,10 @@ public:
   /// Returns true if any set bit corresponds to queried dim.
   bool hasAnyDimOf(const llvm::BitVector &bits, Dim d) const;
 
-  /// Dimension setter.
+  /// Setter
   void setDim(unsigned t, unsigned i, Dim d) { dims[t][i] = d; }
 
-  /// Convenience getters to immediately access the stored nodes.
-  /// Typically it is inadvisible to keep the reference around, as in
-  /// "TensorExpr &te = merger.exp(e))", since insertions into the merger
-  /// may cause data movement and invalidate the underlying memory address.
+  /// Getters.
   TensorExp &exp(unsigned e) { return tensorExps[e]; }
   LatPoint &lat(unsigned l) { return latPoints[l]; }
   SmallVector<unsigned, 16> &set(unsigned s) { return latSets[s]; }

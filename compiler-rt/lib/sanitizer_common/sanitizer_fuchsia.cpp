@@ -156,10 +156,8 @@ uptr GetMmapGranularity() { return _zx_system_get_page_size(); }
 
 sanitizer_shadow_bounds_t ShadowBounds;
 
-void InitShadowBounds() { ShadowBounds = __sanitizer_shadow_bounds(); }
-
 uptr GetMaxUserVirtualAddress() {
-  InitShadowBounds();
+  ShadowBounds = __sanitizer_shadow_bounds();
   return ShadowBounds.memory_limit - 1;
 }
 

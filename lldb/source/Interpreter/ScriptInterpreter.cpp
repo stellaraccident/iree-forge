@@ -47,7 +47,7 @@ void ScriptInterpreter::CollectDataForWatchpointCommandCallback(
 }
 
 bool ScriptInterpreter::LoadScriptingModule(const char *filename,
-                                            const LoadScriptOptions &options,
+                                            bool init_session,
                                             lldb_private::Status &error,
                                             StructuredData::ObjectSP *module_sp,
                                             FileSpec extra_search_dir) {

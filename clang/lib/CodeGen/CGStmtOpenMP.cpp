@@ -826,7 +826,8 @@ bool CodeGenFunction::EmitOMPFirstprivateClause(const OMPExecutableDirective &D,
       if (DeviceConstTarget && OrigVD->getType().isConstant(getContext()) &&
           FD && FD->getType()->isReferenceType() &&
           (!VD || !VD->hasAttr<OMPAllocateDeclAttr>())) {
-        EmittedAsFirstprivate.insert(OrigVD->getCanonicalDecl());
+        (void)CGM.getOpenMPRuntime().registerTargetFirstprivateCopy(*this,
+                                                                    OrigVD);
         ++IRef;
         ++InitsRef;
         continue;
