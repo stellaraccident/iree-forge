@@ -1,0 +1,52 @@
+[submodule "trees/iree/third_party/googletest"]
+	path = trees/iree/third_party/googletest
+	url = https://github.com/google/googletest.git
+[submodule "trees/iree/third_party/llvm-project"]
+	path = trees/iree/third_party/llvm-project
+	url = https://github.com/llvm/llvm-project.git
+[submodule "trees/iree/third_party/tensorflow"]
+	path = trees/iree/third_party/tensorflow
+	url = https://github.com/tensorflow/tensorflow.git
+[submodule "trees/iree/third_party/vulkan_headers"]
+	path = trees/iree/third_party/vulkan_headers
+	url = https://github.com/KhronosGroup/Vulkan-Headers.git
+[submodule "trees/iree/third_party/vulkan_memory_allocator"]
+	path = trees/iree/third_party/vulkan_memory_allocator
+	url = https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git
+[submodule "trees/iree/third_party/spirv_headers"]
+	path = trees/iree/third_party/spirv_headers
+	url = https://github.com/KhronosGroup/SPIRV-Headers.git
+[submodule "trees/iree/third_party/pybind11"]
+	path = trees/iree/third_party/pybind11
+	url = https://github.com/pybind/pybind11.git
+	branch = stable
+[submodule "trees/iree/third_party/benchmark"]
+	path = trees/iree/third_party/benchmark
+	url = https://github.com/google/benchmark.git
+[submodule "trees/iree/third_party/tracy"]
+	path = trees/iree/third_party/tracy
+	url = https://github.com/wolfpld/tracy.git
+[submodule "trees/iree/third_party/mlir-emitc"]
+	path = trees/iree/third_party/mlir-emitc
+	url = https://github.com/iml130/mlir-emitc.git
+[submodule "trees/iree/third_party/flatcc"]
+	path = trees/iree/third_party/flatcc
+	url = https://github.com/dvidelabs/flatcc.git
+[submodule "trees/iree/third_party/spirv_cross"]
+	path = trees/iree/third_party/spirv_cross
+	url = https://github.com/KhronosGroup/SPIRV-Cross.git
+[submodule "trees/iree/third_party/cpuinfo"]
+	path = trees/iree/third_party/cpuinfo
+	url = https://github.com/pytorch/cpuinfo.git
+[submodule "trees/iree/third_party/liburing"]
+	path = trees/iree/third_party/liburing
+	url = https://github.com/axboe/liburing.git
+[submodule "trees/iree/third_party/mlir-hlo"]
+	path = trees/iree/third_party/mlir-hlo
+	url = https://github.com/tensorflow/mlir-hlo.git
+[submodule "trees/iree/third_party/stblib"]
+	path = trees/iree/third_party/stblib
+	url = https://github.com/nothings/stb
+[submodule "trees/iree/third_party/libyaml"]
+	path = trees/iree/third_party/libyaml
+	url = https://github.com/yaml/libyaml.git
