@@ -50,3 +50,9 @@
 [submodule "trees/iree/third_party/libyaml"]
 	path = trees/iree/third_party/libyaml
 	url = https://github.com/yaml/libyaml.git
+[submodule "trees/mlir-npcomp/external/llvm-project"]
+	path = trees/mlir-npcomp/external/llvm-project
+	url = https://github.com/llvm/llvm-project.git
+[submodule "trees/mlir-npcomp/external/mlir-hlo"]
+	path = trees/mlir-npcomp/external/mlir-hlo
+	url = https://github.com/tensorflow/mlir-hlo
