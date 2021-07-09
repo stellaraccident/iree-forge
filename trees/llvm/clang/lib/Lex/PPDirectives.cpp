@@ -1480,7 +1480,7 @@ void Preprocessor::HandleUserDiagnosticDirective(Token &Tok,
 
   // Find the first non-whitespace character, so that we can make the
   // diagnostic more succinct.
-  StringRef Msg = Message.str().ltrim(' ');
+  StringRef Msg = StringRef(Message).ltrim(' ');
 
   if (isWarning)
     Diag(Tok, diag::pp_hash_warning) << Msg;

@@ -1076,12 +1076,15 @@ bool FastISel::lowerCallTo(CallLoweringInfo &CLI) {
     }
     MaybeAlign MemAlign = Arg.Alignment;
     if (Arg.IsByVal || Arg.IsInAlloca || Arg.IsPreallocated) {
-      unsigned FrameSize = DL.getTypeAllocSize(Arg.IndirectType);
+      PointerType *Ty = cast<PointerType>(Arg.Ty);
+      Type *ElementTy = Ty->getElementType();
+      unsigned FrameSize =
+          DL.getTypeAllocSize(Arg.ByValType ? Arg.ByValType : ElementTy);
 
       // For ByVal, alignment should come from FE. BE will guess if this info
       // is not there, but there are cases it cannot get right.
       if (!MemAlign)
-        MemAlign = Align(TLI.getByValTypeAlignment(Arg.IndirectType, DL));
+        MemAlign = Align(TLI.getByValTypeAlignment(ElementTy, DL));
       Flags.setByValSize(FrameSize);
     } else if (!MemAlign) {
       MemAlign = DL.getABITypeAlign(Arg.Ty);

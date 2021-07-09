@@ -94,9 +94,6 @@ template <typename...>
 struct set;
 
 template <typename...>
-struct set_list;
-
-template <typename...>
 struct space;
 
 template <typename...>
@@ -171,8 +168,6 @@ struct aff<Anonymous> : public isl::aff {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -364,8 +359,6 @@ struct aff<Domain, Anonymous> : public isl::aff {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -580,8 +573,6 @@ struct aff<pair<Domain2, Range2>, Anonymous> : public isl::aff {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -800,8 +791,6 @@ struct aff_list<Anonymous> : public isl::aff_list {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -877,8 +866,6 @@ struct aff_list<Domain, Anonymous> : public isl::aff_list {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -965,8 +952,6 @@ struct basic_map<Domain, Range> : public isl::basic_map {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -1169,8 +1154,6 @@ struct basic_map<pair<Domain, Range>, Range2> : public isl::basic_map {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -1370,8 +1353,6 @@ struct basic_map<Domain, Domain> : public isl::basic_map {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -1579,8 +1560,6 @@ struct basic_map<Domain, pair<Range, Range2>> : public isl::basic_map {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -1780,8 +1759,6 @@ struct basic_map<pair<T1, T2>, pair<T1, T2>> : public isl::basic_map {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -1986,8 +1963,6 @@ struct basic_map<pair<T1, T2>, pair<Range, Range2>> : public isl::basic_map {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -2187,8 +2162,6 @@ struct basic_set<> : public isl::basic_set {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -2268,7 +2241,6 @@ struct basic_set<> : public isl::basic_set {
   inline typed::set<> project_out_param(const std::string &id) const;
   inline typed::set<> project_out_param(const typed::id_list<Anonymous> &list) const;
   inline typed::pw_multi_aff<> pw_multi_aff_on_domain(const typed::multi_val<> &mv) const = delete;
-  inline typed::set_list<> set_list() const;
   inline typed::fixed_box<> simple_fixed_box_hull() const = delete;
   inline typed::space<> space() const;
   inline typed::set<> subtract(const typed::set<> &set2) const;
@@ -2330,8 +2302,6 @@ struct basic_set<Domain> : public isl::basic_set {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -2427,7 +2397,6 @@ struct basic_set<Domain> : public isl::basic_set {
   inline typed::set<Domain> project_out_param(const typed::id_list<Anonymous> &list) const;
   template <typename Range>
   inline typed::pw_multi_aff<Domain, Range> pw_multi_aff_on_domain(const typed::multi_val<Range> &mv) const;
-  inline typed::set_list<Domain> set_list() const;
   inline typed::fixed_box<Domain> simple_fixed_box_hull() const;
   inline typed::space<Domain> space() const;
   inline typed::set<Domain> subtract(const typed::set<Domain> &set2) const;
@@ -2489,8 +2458,6 @@ struct basic_set<pair<Domain, Range>> : public isl::basic_set {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -2587,7 +2554,6 @@ struct basic_set<pair<Domain, Range>> : public isl::basic_set {
   inline typed::set<pair<Domain, Range>> project_out_param(const typed::id_list<Anonymous> &list) const;
   template <typename Arg2>
   inline typed::pw_multi_aff<pair<Domain, Range>, Arg2> pw_multi_aff_on_domain(const typed::multi_val<Arg2> &mv) const;
-  inline typed::set_list<pair<Domain, Range>> set_list() const;
   inline typed::fixed_box<pair<Domain, Range>> simple_fixed_box_hull() const;
   inline typed::space<pair<Domain, Range>> space() const;
   inline typed::set<pair<Domain, Range>> subtract(const typed::set<pair<Domain, Range>> &set2) const;
@@ -2649,8 +2615,6 @@ struct fixed_box<Domain> : public isl::fixed_box {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -2735,8 +2699,6 @@ struct fixed_box<Domain, Range> : public isl::fixed_box {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -2823,8 +2785,6 @@ struct id<Anonymous> : public isl::id {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -2894,8 +2854,6 @@ struct id_list<Anonymous> : public isl::id_list {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -2973,8 +2931,6 @@ struct map<Domain, Range> : public isl::map {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -3223,8 +3179,6 @@ struct map<pair<Domain, Range>, Range2> : public isl::map {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -3470,8 +3424,6 @@ struct map<Domain, Domain> : public isl::map {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -3745,8 +3697,6 @@ struct map<Domain, pair<Range, Range2>> : public isl::map {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -3992,8 +3942,6 @@ struct map<pair<T1, T2>, pair<T1, T2>> : public isl::map {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -4264,8 +4212,6 @@ struct map<pair<T1, T2>, pair<Range, Range2>> : public isl::map {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -4511,8 +4457,6 @@ struct map_list<Domain, Range> : public isl::map_list {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -4600,8 +4544,6 @@ struct multi_aff<Domain> : public isl::multi_aff {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -4788,8 +4730,6 @@ struct multi_aff<Domain, Range> : public isl::multi_aff {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -4991,8 +4931,6 @@ struct multi_aff<pair<Domain2, Range2>, Range> : public isl::multi_aff {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -5198,8 +5136,6 @@ struct multi_aff<Domain, pair<Range, Range2>> : public isl::multi_aff {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -5399,8 +5335,6 @@ struct multi_aff<pair<T1, T2>, pair<Range, Range2>> : public isl::multi_aff {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -5605,8 +5539,6 @@ struct multi_id<Domain> : public isl::multi_id {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -5695,8 +5627,6 @@ struct multi_pw_aff<Domain> : public isl::multi_pw_aff {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -5878,8 +5808,6 @@ struct multi_pw_aff<Domain, Range> : public isl::multi_pw_aff {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -6074,8 +6002,6 @@ struct multi_pw_aff<pair<Domain2, Range2>, Range> : public isl::multi_pw_aff {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -6272,8 +6198,6 @@ struct multi_union_pw_aff<Domain> : public isl::multi_union_pw_aff {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -6404,8 +6328,6 @@ struct multi_union_pw_aff<Domain, Range> : public isl::multi_union_pw_aff {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -6550,8 +6472,6 @@ struct multi_val<Domain> : public isl::multi_val {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -6661,8 +6581,6 @@ struct point<> : public isl::point {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -6739,7 +6657,6 @@ struct point<> : public isl::point {
   inline typed::set<> project_out_param(const std::string &id) const;
   inline typed::set<> project_out_param(const typed::id_list<Anonymous> &list) const;
   inline typed::pw_multi_aff<> pw_multi_aff_on_domain(const typed::multi_val<> &mv) const = delete;
-  inline typed::set_list<> set_list() const;
   inline typed::fixed_box<> simple_fixed_box_hull() const = delete;
   inline typed::space<> space() const;
   inline typed::set<> subtract(const typed::set<> &set2) const;
@@ -6800,8 +6717,6 @@ struct point<Domain> : public isl::point {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -6894,7 +6809,6 @@ struct point<Domain> : public isl::point {
   inline typed::set<Domain> project_out_param(const typed::id_list<Anonymous> &list) const;
   template <typename Range>
   inline typed::pw_multi_aff<Domain, Range> pw_multi_aff_on_domain(const typed::multi_val<Range> &mv) const;
-  inline typed::set_list<Domain> set_list() const;
   inline typed::fixed_box<Domain> simple_fixed_box_hull() const;
   inline typed::space<Domain> space() const;
   inline typed::set<Domain> subtract(const typed::set<Domain> &set2) const;
@@ -6955,8 +6869,6 @@ struct point<pair<Domain, Range>> : public isl::point {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -7050,7 +6962,6 @@ struct point<pair<Domain, Range>> : public isl::point {
   inline typed::set<pair<Domain, Range>> project_out_param(const typed::id_list<Anonymous> &list) const;
   template <typename Arg2>
   inline typed::pw_multi_aff<pair<Domain, Range>, Arg2> pw_multi_aff_on_domain(const typed::multi_val<Arg2> &mv) const;
-  inline typed::set_list<pair<Domain, Range>> set_list() const;
   inline typed::fixed_box<pair<Domain, Range>> simple_fixed_box_hull() const;
   inline typed::space<pair<Domain, Range>> space() const;
   inline typed::set<pair<Domain, Range>> subtract(const typed::set<pair<Domain, Range>> &set2) const;
@@ -7111,8 +7022,6 @@ struct pw_aff<Anonymous> : public isl::pw_aff {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -7303,8 +7212,6 @@ struct pw_aff<Domain, Anonymous> : public isl::pw_aff {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -7515,8 +7422,6 @@ struct pw_aff<pair<Domain2, Range2>, Anonymous> : public isl::pw_aff {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -7731,8 +7636,6 @@ struct pw_aff_list<Anonymous> : public isl::pw_aff_list {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -7809,8 +7712,6 @@ struct pw_aff_list<Domain, Anonymous> : public isl::pw_aff_list {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -7898,8 +7799,6 @@ struct pw_multi_aff<Domain> : public isl::pw_multi_aff {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -8088,8 +7987,6 @@ struct pw_multi_aff<Domain, Range> : public isl::pw_multi_aff {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -8291,8 +8188,6 @@ struct pw_multi_aff<pair<Domain2, Range2>, Range> : public isl::pw_multi_aff {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -8500,8 +8395,6 @@ struct pw_multi_aff<Domain, pair<Range, Range2>> : public isl::pw_multi_aff {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -8701,8 +8594,6 @@ struct pw_multi_aff<pair<T1, T2>, pair<Range, Range2>> : public isl::pw_multi_af
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -8909,8 +8800,6 @@ struct pw_multi_aff_list<Domain> : public isl::pw_multi_aff_list {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -8998,8 +8887,6 @@ struct pw_multi_aff_list<Domain, Range> : public isl::pw_multi_aff_list {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -9090,8 +8977,6 @@ struct set<> : public isl::set {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -9175,7 +9060,6 @@ struct set<> : public isl::set {
   inline typed::set<> project_out_param(const std::string &id) const;
   inline typed::set<> project_out_param(const typed::id_list<Anonymous> &list) const;
   inline typed::pw_multi_aff<> pw_multi_aff_on_domain(const typed::multi_val<> &mv) const = delete;
-  inline typed::set_list<> set_list() const;
   inline typed::fixed_box<> simple_fixed_box_hull() const = delete;
   inline typed::fixed_box<> get_simple_fixed_box_hull() const = delete;
   inline typed::space<> space() const;
@@ -9242,8 +9126,6 @@ struct set<Domain> : public isl::set {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -9345,7 +9227,6 @@ struct set<Domain> : public isl::set {
   inline typed::set<Domain> project_out_param(const typed::id_list<Anonymous> &list) const;
   template <typename Range>
   inline typed::pw_multi_aff<Domain, Range> pw_multi_aff_on_domain(const typed::multi_val<Range> &mv) const;
-  inline typed::set_list<Domain> set_list() const;
   inline typed::fixed_box<Domain> simple_fixed_box_hull() const;
   inline typed::fixed_box<Domain> get_simple_fixed_box_hull() const = delete;
   inline typed::space<Domain> space() const;
@@ -9412,8 +9293,6 @@ struct set<pair<Domain, Range>> : public isl::set {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -9516,7 +9395,6 @@ struct set<pair<Domain, Range>> : public isl::set {
   inline typed::set<pair<Domain, Range>> project_out_param(const typed::id_list<Anonymous> &list) const;
   template <typename Arg2>
   inline typed::pw_multi_aff<pair<Domain, Range>, Arg2> pw_multi_aff_on_domain(const typed::multi_val<Arg2> &mv) const;
-  inline typed::set_list<pair<Domain, Range>> set_list() const;
   inline typed::fixed_box<pair<Domain, Range>> simple_fixed_box_hull() const;
   inline typed::fixed_box<pair<Domain, Range>> get_simple_fixed_box_hull() const = delete;
   inline typed::space<pair<Domain, Range>> space() const;
@@ -9539,181 +9417,6 @@ struct set<pair<Domain, Range>> : public isl::set {
   inline typed::map<Domain, Range> unwrap() const;
   inline typed::set<pair<Domain, Range>> upper_bound(const typed::multi_pw_aff<pair<Domain, Range>> &upper) const;
   inline typed::set<pair<Domain, Range>> upper_bound(const typed::multi_val<pair<Domain, Range>> &upper) const;
-};
-
-template <>
-struct set_list<> : public isl::set_list {
-  template <typename...>
-  friend struct aff;
-  template <typename...>
-  friend struct aff_list;
-  template <typename...>
-  friend struct basic_map;
-  template <typename...>
-  friend struct basic_set;
-  template <typename...>
-  friend struct fixed_box;
-  template <typename...>
-  friend struct id;
-  template <typename...>
-  friend struct id_list;
-  template <typename...>
-  friend struct map;
-  template <typename...>
-  friend struct map_list;
-  template <typename...>
-  friend struct multi_aff;
-  template <typename...>
-  friend struct multi_id;
-  template <typename...>
-  friend struct multi_pw_aff;
-  template <typename...>
-  friend struct multi_union_pw_aff;
-  template <typename...>
-  friend struct multi_val;
-  template <typename...>
-  friend struct point;
-  template <typename...>
-  friend struct pw_aff;
-  template <typename...>
-  friend struct pw_aff_list;
-  template <typename...>
-  friend struct pw_multi_aff;
-  template <typename...>
-  friend struct pw_multi_aff_list;
-  template <typename...>
-  friend struct set;
-  template <typename...>
-  friend struct set_list;
-  template <typename...>
-  friend struct space;
-  template <typename...>
-  friend struct union_map;
-  template <typename...>
-  friend struct union_pw_aff;
-  template <typename...>
-  friend struct union_pw_aff_list;
-  template <typename...>
-  friend struct union_pw_multi_aff;
-  template <typename...>
-  friend struct union_set;
-  template <typename...>
-  friend struct union_set_list;
-  template <typename...>
-  friend struct val;
-  template <typename...>
-  friend struct val_list;
-
-  set_list() = default;
- private:
-  template <typename base,
-            typename std::enable_if<
-              std::is_same<base, isl::set_list>{}, bool>::type = true>
-  set_list(const base &obj) : isl::set_list(obj) {}
- public:
-  static set_list from(const isl::set_list &obj) {
-    return set_list(obj);
-  }
-  inline explicit set_list(const isl::ctx &ctx, int n);
-  inline explicit set_list(const typed::set<> &el);
-  inline explicit set_list(const isl::ctx &ctx, const std::string &str);
-  inline typed::set_list<> add(const typed::set<> &el) const;
-  inline typed::set_list<> add(const typed::basic_set<> &el) const;
-  inline typed::set_list<> add(const typed::point<> &el) const;
-  inline typed::set<> at(int index) const = delete;
-  inline typed::set<> get_at(int index) const = delete;
-  inline typed::set_list<> drop(unsigned int first, unsigned int n) const;
-  inline void foreach(const std::function<void(typed::set<>)> &fn) const;
-};
-
-template <typename Domain>
-struct set_list<Domain> : public isl::set_list {
-  template <typename...>
-  friend struct aff;
-  template <typename...>
-  friend struct aff_list;
-  template <typename...>
-  friend struct basic_map;
-  template <typename...>
-  friend struct basic_set;
-  template <typename...>
-  friend struct fixed_box;
-  template <typename...>
-  friend struct id;
-  template <typename...>
-  friend struct id_list;
-  template <typename...>
-  friend struct map;
-  template <typename...>
-  friend struct map_list;
-  template <typename...>
-  friend struct multi_aff;
-  template <typename...>
-  friend struct multi_id;
-  template <typename...>
-  friend struct multi_pw_aff;
-  template <typename...>
-  friend struct multi_union_pw_aff;
-  template <typename...>
-  friend struct multi_val;
-  template <typename...>
-  friend struct point;
-  template <typename...>
-  friend struct pw_aff;
-  template <typename...>
-  friend struct pw_aff_list;
-  template <typename...>
-  friend struct pw_multi_aff;
-  template <typename...>
-  friend struct pw_multi_aff_list;
-  template <typename...>
-  friend struct set;
-  template <typename...>
-  friend struct set_list;
-  template <typename...>
-  friend struct space;
-  template <typename...>
-  friend struct union_map;
-  template <typename...>
-  friend struct union_pw_aff;
-  template <typename...>
-  friend struct union_pw_aff_list;
-  template <typename...>
-  friend struct union_pw_multi_aff;
-  template <typename...>
-  friend struct union_set;
-  template <typename...>
-  friend struct union_set_list;
-  template <typename...>
-  friend struct val;
-  template <typename...>
-  friend struct val_list;
-
-  set_list() = default;
-  template <typename Arg1,
-            typename std::enable_if<
-              std::is_base_of<Domain, Arg1>{},
-            bool>::type = true>
-  set_list(const set_list<Arg1> &obj) : isl::set_list(obj) {}
- private:
-  template <typename base,
-            typename std::enable_if<
-              std::is_same<base, isl::set_list>{}, bool>::type = true>
-  set_list(const base &obj) : isl::set_list(obj) {}
- public:
-  static set_list from(const isl::set_list &obj) {
-    return set_list(obj);
-  }
-  inline explicit set_list(const isl::ctx &ctx, int n);
-  inline explicit set_list(const typed::set<Domain> &el);
-  inline explicit set_list(const isl::ctx &ctx, const std::string &str);
-  inline typed::set_list<Domain> add(const typed::set<Domain> &el) const;
-  inline typed::set_list<Domain> add(const typed::basic_set<Domain> &el) const;
-  inline typed::set_list<Domain> add(const typed::point<Domain> &el) const;
-  inline typed::set<Domain> at(int index) const;
-  inline typed::set<Domain> get_at(int index) const = delete;
-  inline typed::set_list<Domain> drop(unsigned int first, unsigned int n) const;
-  inline void foreach(const std::function<void(typed::set<Domain>)> &fn) const;
 };
 
 template <>
@@ -9758,8 +9461,6 @@ struct space<> : public isl::space {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -9883,8 +9584,6 @@ struct space<Domain> : public isl::space {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -10018,8 +9717,6 @@ struct space<Domain, Range> : public isl::space {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -10150,8 +9847,6 @@ struct space<pair<Domain, Range>> : public isl::space {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -10284,8 +9979,6 @@ struct space<pair<Domain, Range>, Range2> : public isl::space {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -10415,8 +10108,6 @@ struct space<Domain, pair<Range, Range2>> : public isl::space {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -10548,8 +10239,6 @@ struct space<pair<T1, T2>, pair<Range, Range2>> : public isl::space {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -10678,8 +10367,6 @@ struct union_map<Domain, Range> : public isl::union_map {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -10874,8 +10561,6 @@ struct union_map<pair<Domain, Range>, Range2> : public isl::union_map {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -11069,8 +10754,6 @@ struct union_map<Domain, Domain> : public isl::union_map {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -11267,8 +10950,6 @@ struct union_map<Domain, pair<Range, Range2>> : public isl::union_map {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -11462,8 +11143,6 @@ struct union_map<pair<T1, T2>, pair<T1, T2>> : public isl::union_map {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -11661,8 +11340,6 @@ struct union_map<pair<T1, T2>, pair<Range, Range2>> : public isl::union_map {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -11858,8 +11535,6 @@ struct union_pw_aff<Anonymous> : public isl::union_pw_aff {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -11993,8 +11668,6 @@ struct union_pw_aff<Domain, Anonymous> : public isl::union_pw_aff {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -12149,8 +11822,6 @@ struct union_pw_aff<pair<Domain, Domain2>, Anonymous> : public isl::union_pw_aff
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -12308,8 +11979,6 @@ struct union_pw_aff_list<Anonymous> : public isl::union_pw_aff_list {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -12387,8 +12056,6 @@ struct union_pw_aff_list<Domain, Anonymous> : public isl::union_pw_aff_list {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -12477,8 +12144,6 @@ struct union_pw_multi_aff<Domain> : public isl::union_pw_multi_aff {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -12617,8 +12282,6 @@ struct union_pw_multi_aff<Domain, Range> : public isl::union_pw_multi_aff {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -12770,8 +12433,6 @@ struct union_pw_multi_aff<pair<Domain, Domain2>, Range> : public isl::union_pw_m
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -12929,8 +12590,6 @@ struct union_pw_multi_aff<Domain, pair<Range, Range2>> : public isl::union_pw_mu
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -13082,8 +12741,6 @@ struct union_pw_multi_aff<pair<T1, T2>, pair<Range, Range2>> : public isl::union
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -13242,8 +12899,6 @@ struct union_set<> : public isl::union_set {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -13304,8 +12959,6 @@ struct union_set<> : public isl::union_set {
   inline typed::union_set<> preimage(const typed::multi_aff<> &ma) const = delete;
   inline typed::union_set<> preimage(const typed::pw_multi_aff<> &pma) const = delete;
   inline typed::union_set<> preimage(const typed::union_pw_multi_aff<> &upma) const = delete;
-  inline typed::set_list<> set_list() const;
-  inline typed::set_list<> get_set_list() const = delete;
   inline typed::space<> space() const;
   inline typed::space<> get_space() const = delete;
   inline typed::union_set<> subtract(const typed::union_set<> &uset2) const;
@@ -13362,8 +13015,6 @@ struct union_set<Domain> : public isl::union_set {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -13436,8 +13087,6 @@ struct union_set<Domain> : public isl::union_set {
   inline typed::union_set<Domain2> preimage(const typed::pw_multi_aff<Domain2, Domain> &pma) const;
   template <typename Domain2>
   inline typed::union_set<Domain2> preimage(const typed::union_pw_multi_aff<Domain2, Domain> &upma) const;
-  inline typed::set_list<Domain> set_list() const;
-  inline typed::set_list<Domain> get_set_list() const = delete;
   inline typed::space<> space() const;
   inline typed::space<Domain> get_space() const = delete;
   inline typed::union_set<Domain> subtract(const typed::union_set<Domain> &uset2) const;
@@ -13494,8 +13143,6 @@ struct union_set<pair<Domain, Range>> : public isl::union_set {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -13569,8 +13216,6 @@ struct union_set<pair<Domain, Range>> : public isl::union_set {
   inline typed::union_set<Domain2> preimage(const typed::pw_multi_aff<Domain2, pair<Domain, Range>> &pma) const;
   template <typename Domain2>
   inline typed::union_set<Domain2> preimage(const typed::union_pw_multi_aff<Domain2, pair<Domain, Range>> &upma) const;
-  inline typed::set_list<pair<Domain, Range>> set_list() const;
-  inline typed::set_list<pair<Domain, Range>> get_set_list() const = delete;
   inline typed::space<> space() const;
   inline typed::space<pair<Domain, Range>> get_space() const = delete;
   inline typed::union_set<pair<Domain, Range>> subtract(const typed::union_set<pair<Domain, Range>> &uset2) const;
@@ -13627,8 +13272,6 @@ struct union_set_list<> : public isl::union_set_list {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -13713,8 +13356,6 @@ struct union_set_list<Domain> : public isl::union_set_list {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -13805,8 +13446,6 @@ struct val<Anonymous> : public isl::val {
   template <typename...>
   friend struct set;
   template <typename...>
-  friend struct set_list;
-  template <typename...>
   friend struct space;
   template <typename...>
   friend struct union_map;
@@ -13891,8 +13530,6 @@ struct val_list<Anonymous> : public isl::val_list {
   friend struct pw_multi_aff_list;
   template <typename...>
   friend struct set;
-  template <typename...>
-  friend struct set_list;
   template <typename...>
   friend struct space;
   template <typename...>
@@ -20118,12 +19755,6 @@ typed::set<> typed::basic_set<>::project_out_param(const typed::id_list<Anonymou
   return typed::set<>(res);
 }
 
-typed::set_list<> typed::basic_set<>::set_list() const
-{
-  auto res = isl::basic_set::set_list();
-  return typed::set_list<>(res);
-}
-
 typed::space<> typed::basic_set<>::space() const
 {
   auto res = isl::basic_set::space();
@@ -20542,13 +20173,6 @@ typed::pw_multi_aff<Domain, Range> typed::basic_set<Domain>::pw_multi_aff_on_dom
 {
   auto res = isl::basic_set::pw_multi_aff_on_domain(mv);
   return typed::pw_multi_aff<Domain, Range>(res);
-}
-
-template <typename Domain>
-typed::set_list<Domain> typed::basic_set<Domain>::set_list() const
-{
-  auto res = isl::basic_set::set_list();
-  return typed::set_list<Domain>(res);
 }
 
 template <typename Domain>
@@ -21007,13 +20631,6 @@ typed::pw_multi_aff<pair<Domain, Range>, Arg2> typed::basic_set<pair<Domain, Ran
 {
   auto res = isl::basic_set::pw_multi_aff_on_domain(mv);
   return typed::pw_multi_aff<pair<Domain, Range>, Arg2>(res);
-}
-
-template <typename Domain, typename Range>
-typed::set_list<pair<Domain, Range>> typed::basic_set<pair<Domain, Range>>::set_list() const
-{
-  auto res = isl::basic_set::set_list();
-  return typed::set_list<pair<Domain, Range>>(res);
 }
 
 template <typename Domain, typename Range>
@@ -32095,12 +31712,6 @@ typed::set<> typed::point<>::project_out_param(const typed::id_list<Anonymous> &
   return typed::set<>(res);
 }
 
-typed::set_list<> typed::point<>::set_list() const
-{
-  auto res = isl::point::set_list();
-  return typed::set_list<>(res);
-}
-
 typed::space<> typed::point<>::space() const
 {
   auto res = isl::point::space();
@@ -32487,13 +32098,6 @@ typed::pw_multi_aff<Domain, Range> typed::point<Domain>::pw_multi_aff_on_domain(
 {
   auto res = isl::point::pw_multi_aff_on_domain(mv);
   return typed::pw_multi_aff<Domain, Range>(res);
-}
-
-template <typename Domain>
-typed::set_list<Domain> typed::point<Domain>::set_list() const
-{
-  auto res = isl::point::set_list();
-  return typed::set_list<Domain>(res);
 }
 
 template <typename Domain>
@@ -32919,13 +32523,6 @@ typed::pw_multi_aff<pair<Domain, Range>, Arg2> typed::point<pair<Domain, Range>>
 {
   auto res = isl::point::pw_multi_aff_on_domain(mv);
   return typed::pw_multi_aff<pair<Domain, Range>, Arg2>(res);
-}
-
-template <typename Domain, typename Range>
-typed::set_list<pair<Domain, Range>> typed::point<pair<Domain, Range>>::set_list() const
-{
-  auto res = isl::point::set_list();
-  return typed::set_list<pair<Domain, Range>>(res);
 }
 
 template <typename Domain, typename Range>
@@ -38674,12 +38271,6 @@ typed::set<> typed::set<>::project_out_param(const typed::id_list<Anonymous> &li
   return typed::set<>(res);
 }
 
-typed::set_list<> typed::set<>::set_list() const
-{
-  auto res = isl::set::set_list();
-  return typed::set_list<>(res);
-}
-
 typed::space<> typed::set<>::space() const
 {
   auto res = isl::set::space();
@@ -39132,13 +38723,6 @@ typed::pw_multi_aff<Domain, Range> typed::set<Domain>::pw_multi_aff_on_domain(co
 {
   auto res = isl::set::pw_multi_aff_on_domain(mv);
   return typed::pw_multi_aff<Domain, Range>(res);
-}
-
-template <typename Domain>
-typed::set_list<Domain> typed::set<Domain>::set_list() const
-{
-  auto res = isl::set::set_list();
-  return typed::set_list<Domain>(res);
 }
 
 template <typename Domain>
@@ -39636,13 +39220,6 @@ typed::pw_multi_aff<pair<Domain, Range>, Arg2> typed::set<pair<Domain, Range>>::
 }
 
 template <typename Domain, typename Range>
-typed::set_list<pair<Domain, Range>> typed::set<pair<Domain, Range>>::set_list() const
-{
-  auto res = isl::set::set_list();
-  return typed::set_list<pair<Domain, Range>>(res);
-}
-
-template <typename Domain, typename Range>
 typed::fixed_box<pair<Domain, Range>> typed::set<pair<Domain, Range>>::simple_fixed_box_hull() const
 {
   auto res = isl::set::simple_fixed_box_hull();
@@ -39760,115 +39337,6 @@ typed::set<pair<Domain, Range>> typed::set<pair<Domain, Range>>::upper_bound(con
 {
   auto res = isl::set::upper_bound(upper);
   return typed::set<pair<Domain, Range>>(res);
-}
-
-typed::set_list<>::set_list(const isl::ctx &ctx, int n)
-  : isl::set_list(ctx, n)
-{
-}
-
-typed::set_list<>::set_list(const typed::set<> &el)
-  : isl::set_list(el)
-{
-}
-
-typed::set_list<>::set_list(const isl::ctx &ctx, const std::string &str)
-  : isl::set_list(ctx, str)
-{
-}
-
-typed::set_list<> typed::set_list<>::add(const typed::set<> &el) const
-{
-  auto res = isl::set_list::add(el);
-  return typed::set_list<>(res);
-}
-
-typed::set_list<> typed::set_list<>::add(const typed::basic_set<> &el) const
-{
-  auto res = isl::set_list::add(el);
-  return typed::set_list<>(res);
-}
-
-typed::set_list<> typed::set_list<>::add(const typed::point<> &el) const
-{
-  auto res = isl::set_list::add(el);
-  return typed::set_list<>(res);
-}
-
-typed::set_list<> typed::set_list<>::drop(unsigned int first, unsigned int n) const
-{
-  auto res = isl::set_list::drop(first, n);
-  return typed::set_list<>(res);
-}
-
-void typed::set_list<>::foreach(const std::function<void(typed::set<>)> &fn) const
-{
-  auto lambda = [&] (isl::set arg0) {
-    return fn(typed::set<>(arg0));
-  };
-  return isl::set_list::foreach(lambda);
-}
-
-template <typename Domain>
-typed::set_list<Domain>::set_list(const isl::ctx &ctx, int n)
-  : isl::set_list(ctx, n)
-{
-}
-
-template <typename Domain>
-typed::set_list<Domain>::set_list(const typed::set<Domain> &el)
-  : isl::set_list(el)
-{
-}
-
-template <typename Domain>
-typed::set_list<Domain>::set_list(const isl::ctx &ctx, const std::string &str)
-  : isl::set_list(ctx, str)
-{
-}
-
-template <typename Domain>
-typed::set_list<Domain> typed::set_list<Domain>::add(const typed::set<Domain> &el) const
-{
-  auto res = isl::set_list::add(el);
-  return typed::set_list<Domain>(res);
-}
-
-template <typename Domain>
-typed::set_list<Domain> typed::set_list<Domain>::add(const typed::basic_set<Domain> &el) const
-{
-  auto res = isl::set_list::add(el);
-  return typed::set_list<Domain>(res);
-}
-
-template <typename Domain>
-typed::set_list<Domain> typed::set_list<Domain>::add(const typed::point<Domain> &el) const
-{
-  auto res = isl::set_list::add(el);
-  return typed::set_list<Domain>(res);
-}
-
-template <typename Domain>
-typed::set<Domain> typed::set_list<Domain>::at(int index) const
-{
-  auto res = isl::set_list::at(index);
-  return typed::set<Domain>(res);
-}
-
-template <typename Domain>
-typed::set_list<Domain> typed::set_list<Domain>::drop(unsigned int first, unsigned int n) const
-{
-  auto res = isl::set_list::drop(first, n);
-  return typed::set_list<Domain>(res);
-}
-
-template <typename Domain>
-void typed::set_list<Domain>::foreach(const std::function<void(typed::set<Domain>)> &fn) const
-{
-  auto lambda = [&] (isl::set arg0) {
-    return fn(typed::set<Domain>(arg0));
-  };
-  return isl::set_list::foreach(lambda);
 }
 
 template <typename Domain>
@@ -47906,12 +47374,6 @@ typed::union_set<> typed::union_set<>::intersect(const typed::set<> &uset2) cons
   return typed::union_set<>(res);
 }
 
-typed::set_list<> typed::union_set<>::set_list() const
-{
-  auto res = isl::union_set::set_list();
-  return typed::set_list<>(res);
-}
-
 typed::space<> typed::union_set<>::space() const
 {
   auto res = isl::union_set::space();
@@ -48202,13 +47664,6 @@ typed::union_set<Domain2> typed::union_set<Domain>::preimage(const typed::union_
 {
   auto res = isl::union_set::preimage(upma);
   return typed::union_set<Domain2>(res);
-}
-
-template <typename Domain>
-typed::set_list<Domain> typed::union_set<Domain>::set_list() const
-{
-  auto res = isl::union_set::set_list();
-  return typed::set_list<Domain>(res);
 }
 
 template <typename Domain>
@@ -48511,13 +47966,6 @@ typed::union_set<Domain2> typed::union_set<pair<Domain, Range>>::preimage(const 
 {
   auto res = isl::union_set::preimage(upma);
   return typed::union_set<Domain2>(res);
-}
-
-template <typename Domain, typename Range>
-typed::set_list<pair<Domain, Range>> typed::union_set<pair<Domain, Range>>::set_list() const
-{
-  auto res = isl::union_set::set_list();
-  return typed::set_list<pair<Domain, Range>>(res);
 }
 
 template <typename Domain, typename Range>

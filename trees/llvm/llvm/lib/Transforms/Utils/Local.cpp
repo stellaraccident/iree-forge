@@ -473,11 +473,6 @@ bool llvm::wouldInstructionBeTriviallyDead(Instruction *I,
 
       return false;
     }
-
-    if (auto *FPI = dyn_cast<ConstrainedFPIntrinsic>(I)) {
-      Optional<fp::ExceptionBehavior> ExBehavior = FPI->getExceptionBehavior();
-      return ExBehavior.getValue() != fp::ebStrict;
-    }
   }
 
   if (isAllocLikeFn(I, TLI))

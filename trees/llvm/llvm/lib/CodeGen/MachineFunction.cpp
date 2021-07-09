@@ -973,7 +973,9 @@ void MachineFunction::makeDebugValueSubstitution(DebugInstrOperandPair A,
                                                  unsigned Subreg) {
   // Catch any accidental self-loops.
   assert(A.first != B.first);
-  DebugValueSubstitutions.push_back({A, B, Subreg});
+  auto Result = DebugValueSubstitutions.insert({A, {B, Subreg}});
+  (void)Result;
+  assert(Result.second && "Substitution for an already substituted value?");
 }
 
 void MachineFunction::substituteDebugValuesForInst(const MachineInstr &Old,

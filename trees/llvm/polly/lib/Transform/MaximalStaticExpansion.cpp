@@ -189,7 +189,7 @@ bool MaximalStaticExpander::isExpandable(
     for (auto Write : Writes) {
       auto MapDeps = filterDependences(S, Dependences, Write);
       for (isl::map Map : MapDeps.get_map_list())
-        WriteDomain = WriteDomain.unite(Map.range());
+        WriteDomain = WriteDomain.add_set(Map.range());
     }
 
     // For now, read from original scalar is not possible.
@@ -382,7 +382,7 @@ ScopArrayInfo *MaximalStaticExpander::expandAccess(Scop &S, MemoryAccess *MA) {
     assert(!UpperBound.is_null() && UpperBound.is_pos() &&
            !UpperBound.is_nan() &&
            "The upper bound is not a positive integer.");
-    assert(UpperBound.le(isl::val(CurrentAccessMap.ctx(),
+    assert(UpperBound.le(isl::val(CurrentAccessMap.get_ctx(),
                                   std::numeric_limits<int>::max() - 1)) &&
            "The upper bound overflow a int.");
     Sizes.push_back(UpperBound.get_num_si() + 1);

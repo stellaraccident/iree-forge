@@ -225,12 +225,12 @@ void MIRPrinter::print(const MachineFunction &MF) {
   convertStackObjects(YamlMF, MF, MST);
   convertCallSiteObjects(YamlMF, MF, MST);
   for (const auto &Sub : MF.DebugValueSubstitutions) {
-    const auto &SubSrc = Sub.Src;
-    const auto &SubDest = Sub.Dest;
+    auto &SubSrc = Sub.first;
+    const MachineFunction::DebugSubstitution &SubDest = Sub.second;
     YamlMF.DebugValueSubstitutions.push_back({SubSrc.first, SubSrc.second,
-                                              SubDest.first,
-                                              SubDest.second,
-                                              Sub.Subreg});
+                                              SubDest.Dest.first,
+                                              SubDest.Dest.second,
+                                              SubDest.Subreg});
   }
   if (const auto *ConstantPool = MF.getConstantPool())
     convert(YamlMF, *ConstantPool);

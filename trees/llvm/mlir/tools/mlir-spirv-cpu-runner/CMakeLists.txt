@@ -17,7 +17,7 @@ if (MLIR_SPIRV_CPU_RUNNER_ENABLED)
     ${conversion_libs}
     MLIRAnalysis
     MLIRExecutionEngine
-    MLIRGPUOps
+    MLIRGPU
     MLIRIR
     MLIRJitRunner
     MLIRLLVMIR

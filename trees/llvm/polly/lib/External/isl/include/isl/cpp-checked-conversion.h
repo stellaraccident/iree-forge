@@ -590,14 +590,6 @@ set uncheck(checked::set obj) {
 	return manage(obj.copy());
 }
 
-checked::set_list check(set_list obj) {
-	return checked::manage(obj.copy());
-}
-
-set_list uncheck(checked::set_list obj) {
-	return manage(obj.copy());
-}
-
 checked::space check(space obj) {
 	return checked::manage(obj.copy());
 }

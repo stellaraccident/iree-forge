@@ -596,7 +596,7 @@ private:
         append(BB->getName());
       }
     }
-    return Scratch.str();
+    return StringRef(Scratch);
   }
 };
 } // namespace

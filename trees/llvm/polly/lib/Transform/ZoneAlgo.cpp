@@ -336,7 +336,7 @@ void ZoneAlgorithm::collectIncompatibleElts(ScopStmt *Stmt,
     // To avoid solving any ILP problems, always add entire arrays instead of
     // just the elements that are accessed.
     auto ArrayElts = isl::set::universe(AccRelMap.get_space().range());
-    AllElts = AllElts.unite(ArrayElts);
+    AllElts = AllElts.add_set(ArrayElts);
 
     if (MA->isRead()) {
       // Reject load after store to same location.
@@ -350,7 +350,7 @@ void ZoneAlgorithm::collectIncompatibleElts(ScopStmt *Stmt,
         R << ", loading: " << AccRel << ")";
         S->getFunction().getContext().diagnose(R);
 
-        IncompatibleElts = IncompatibleElts.unite(ArrayElts);
+        IncompatibleElts = IncompatibleElts.add_set(ArrayElts);
       }
 
       Loads = Loads.unite(AccRel);
@@ -367,7 +367,7 @@ void ZoneAlgorithm::collectIncompatibleElts(ScopStmt *Stmt,
       R << "store is in a non-affine subregion";
       S->getFunction().getContext().diagnose(R);
 
-      IncompatibleElts = IncompatibleElts.unite(ArrayElts);
+      IncompatibleElts = IncompatibleElts.add_set(ArrayElts);
     }
 
     // Do not allow more than one store to the same location.
@@ -380,7 +380,7 @@ void ZoneAlgorithm::collectIncompatibleElts(ScopStmt *Stmt,
       R << ", storing: " << AccRel << ")";
       S->getFunction().getContext().diagnose(R);
 
-      IncompatibleElts = IncompatibleElts.unite(ArrayElts);
+      IncompatibleElts = IncompatibleElts.add_set(ArrayElts);
     }
 
     Stores = Stores.unite(AccRel);
@@ -776,8 +776,8 @@ isl::map ZoneAlgorithm::makeValInst(Value *Val, ScopStmt *UserStmt, Loop *Scope,
     // Construct the SCEV space.
     // TODO: Add only the induction variables referenced in SCEVAddRecExpr
     // expressions, not just all of them.
-    auto ScevId = isl::manage(isl_id_alloc(UseDomainSpace.ctx().get(), nullptr,
-                                           const_cast<SCEV *>(ScevExpr)));
+    auto ScevId = isl::manage(isl_id_alloc(
+        UseDomainSpace.get_ctx().get(), nullptr, const_cast<SCEV *>(ScevExpr)));
 
     auto ScevSpace = UseDomainSpace.drop_dims(isl::dim::set, 0, 0);
     ScevSpace = ScevSpace.set_tuple_id(isl::dim::set, ScevId);

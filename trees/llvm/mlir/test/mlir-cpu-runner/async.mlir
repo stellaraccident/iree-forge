@@ -5,7 +5,6 @@
 // RUN:               -convert-linalg-to-loops                                 \
 // RUN:               -convert-scf-to-std                                      \
 // RUN:               -convert-linalg-to-llvm                                  \
-// RUN:               -convert-memref-to-llvm                                  \
 // RUN:               -convert-std-to-llvm                                     \
 // RUN: | mlir-cpu-runner                                                      \
 // RUN:     -e main -entry-point-result=void -O0                               \

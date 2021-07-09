@@ -293,7 +293,7 @@ bool AMDGPUCallLowering::lowerReturnVal(MachineIRBuilder &B,
   for (unsigned i = 0; i < SplitEVTs.size(); ++i) {
     EVT VT = SplitEVTs[i];
     Register Reg = VRegs[i];
-    ArgInfo RetInfo(Reg, VT.getTypeForEVT(Ctx), 0);
+    ArgInfo RetInfo(Reg, VT.getTypeForEVT(Ctx));
     setArgFlags(RetInfo, AttributeList::ReturnIndex, DL, F);
 
     if (VT.isScalarInteger()) {
@@ -637,7 +637,7 @@ bool AMDGPUCallLowering::lowerFormalArguments(
       }
     }
 
-    ArgInfo OrigArg(VRegs[Idx], Arg, Idx);
+    ArgInfo OrigArg(VRegs[Idx], Arg);
     const unsigned OrigArgIdx = Idx + AttributeList::FirstArgIndex;
     setArgFlags(OrigArg, OrigArgIdx, DL, F);
 

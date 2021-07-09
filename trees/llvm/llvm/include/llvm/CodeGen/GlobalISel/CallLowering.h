@@ -71,17 +71,11 @@ public:
     /// arguments.
     const Value *OrigValue = nullptr;
 
-    /// Index original Function's argument.
-    unsigned OrigArgIndex;
-
-    /// Sentinel value for implicit machine-level input arguments.
-    static const unsigned NoArgIndex = UINT_MAX;
-
-    ArgInfo(ArrayRef<Register> Regs, Type *Ty, unsigned OrigIndex,
+    ArgInfo(ArrayRef<Register> Regs, Type *Ty,
             ArrayRef<ISD::ArgFlagsTy> Flags = ArrayRef<ISD::ArgFlagsTy>(),
             bool IsFixed = true, const Value *OrigValue = nullptr)
         : BaseArgInfo(Ty, Flags, IsFixed), Regs(Regs.begin(), Regs.end()),
-          OrigValue(OrigValue), OrigArgIndex(OrigIndex) {
+          OrigValue(OrigValue) {
       if (!Regs.empty() && Flags.empty())
         this->Flags.push_back(ISD::ArgFlagsTy());
       // FIXME: We should have just one way of saying "no register".
@@ -90,10 +84,10 @@ public:
              "only void types should have no register");
     }
 
-    ArgInfo(ArrayRef<Register> Regs, const Value &OrigValue, unsigned OrigIndex,
+    ArgInfo(ArrayRef<Register> Regs, const Value &OrigValue,
             ArrayRef<ISD::ArgFlagsTy> Flags = ArrayRef<ISD::ArgFlagsTy>(),
             bool IsFixed = true)
-      : ArgInfo(Regs, OrigValue.getType(), OrigIndex, Flags, IsFixed, &OrigValue) {}
+        : ArgInfo(Regs, OrigValue.getType(), Flags, IsFixed, &OrigValue) {}
 
     ArgInfo() : BaseArgInfo() {}
   };

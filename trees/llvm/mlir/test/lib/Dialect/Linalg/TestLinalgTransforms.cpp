@@ -97,10 +97,6 @@ struct TestLinalgTransforms
       *this, "test-transform-pad-tensor",
       llvm::cl::desc("Test transform pad tensor by copying with generic ops"),
       llvm::cl::init(false)};
-  Option<bool> testGeneralizePadTensor{
-      *this, "test-generalize-pad-tensor",
-      llvm::cl::desc("Test transform pad tensor by copying with generic ops"),
-      llvm::cl::init(false)};
   Option<bool> testSwapSubTensorPadTensor{
       *this, "test-swap-subtensor-padtensor",
       llvm::cl::desc("Test rewrite of subtensor(pad_tensor) into "
@@ -534,12 +530,6 @@ static void applyPadTensorToGenericPatterns(FuncOp funcOp) {
   (void)applyPatternsAndFoldGreedily(funcOp, std::move(patterns));
 }
 
-static void applyGeneralizePadTensorPatterns(FuncOp funcOp) {
-  RewritePatternSet patterns(funcOp.getContext());
-  patterns.add<GeneralizePadTensorOpPattern>(funcOp.getContext());
-  (void)applyPatternsAndFoldGreedily(funcOp, std::move(patterns));
-}
-
 static void applyExtractSliceOfPadTensorSwapPattern(FuncOp funcOp) {
   RewritePatternSet patterns(funcOp.getContext());
   patterns.add<ExtractSliceOfPadTensorSwapPattern>(funcOp.getContext());
@@ -624,8 +614,6 @@ void TestLinalgTransforms::runOnFunction() {
     return applyLinalgToVectorPatterns(getFunction());
   if (testTransformPadTensor)
     return applyPadTensorToGenericPatterns(getFunction());
-  if (testGeneralizePadTensor)
-    return applyGeneralizePadTensorPatterns(getFunction());
   if (testSwapSubTensorPadTensor)
     return applyExtractSliceOfPadTensorSwapPattern(getFunction());
   if (testAffineMinSCFCanonicalizationPatterns)

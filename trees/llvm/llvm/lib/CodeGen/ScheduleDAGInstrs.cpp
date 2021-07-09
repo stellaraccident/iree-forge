@@ -807,7 +807,7 @@ void ScheduleDAGInstrs::buildSchedGraph(AAResults *AA,
       DbgMI = nullptr;
     }
 
-    if (MI.isDebugValue() || MI.isDebugRef() || MI.isDebugPHI()) {
+    if (MI.isDebugValue() || MI.isDebugRef()) {
       DbgMI = &MI;
       continue;
     }

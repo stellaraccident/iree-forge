@@ -802,16 +802,6 @@ template <> struct DenseMapInfo<AttributeList> {
 /// value, however, is not. So this can be used as a quick way to test for
 /// equality, presence of attributes, etc.
 class AttrBuilder {
-  // Indices into the TypeAttrs array.
-  enum : unsigned {
-    ByValTypeIndex = 0,
-    StructRetTypeIndex = 1,
-    ByRefTypeIndex = 2,
-    PreallocatedTypeIndex = 3,
-    InAllocaTypeIndex = 4,
-    NumTypeIndices = 5,
-  };
-
   std::bitset<Attribute::EndAttrKinds> Attrs;
   std::map<SmallString<32>, SmallString<32>, std::less<>> TargetDepAttrs;
   MaybeAlign Alignment;
@@ -820,9 +810,11 @@ class AttrBuilder {
   uint64_t DerefOrNullBytes = 0;
   uint64_t AllocSizeArgs = 0;
   uint64_t VScaleRangeArgs = 0;
-  std::array<Type *, NumTypeIndices> TypeAttrs = {};
-
-  Optional<unsigned> kindToTypeIndex(Attribute::AttrKind Kind) const;
+  Type *ByValType = nullptr;
+  Type *StructRetType = nullptr;
+  Type *ByRefType = nullptr;
+  Type *PreallocatedType = nullptr;
+  Type *InAllocaType = nullptr;
 
 public:
   AttrBuilder() = default;
@@ -906,19 +898,19 @@ public:
   uint64_t getDereferenceableOrNullBytes() const { return DerefOrNullBytes; }
 
   /// Retrieve the byval type.
-  Type *getByValType() const { return TypeAttrs[ByValTypeIndex]; }
+  Type *getByValType() const { return ByValType; }
 
   /// Retrieve the sret type.
-  Type *getStructRetType() const { return TypeAttrs[StructRetTypeIndex]; }
+  Type *getStructRetType() const { return StructRetType; }
 
   /// Retrieve the byref type.
-  Type *getByRefType() const { return TypeAttrs[ByRefTypeIndex]; }
+  Type *getByRefType() const { return ByRefType; }
 
   /// Retrieve the preallocated type.
-  Type *getPreallocatedType() const { return TypeAttrs[PreallocatedTypeIndex]; }
+  Type *getPreallocatedType() const { return PreallocatedType; }
 
   /// Retrieve the inalloca type.
-  Type *getInAllocaType() const { return TypeAttrs[InAllocaTypeIndex]; }
+  Type *getInAllocaType() const { return InAllocaType; }
 
   /// Retrieve the allocsize args, if the allocsize attribute exists.  If it
   /// doesn't exist, pair(0, 0) is returned.
@@ -966,9 +958,6 @@ public:
 
   /// This turns two ints into the form used internally in Attribute.
   AttrBuilder &addVScaleRangeAttr(unsigned MinValue, unsigned MaxValue);
-
-  /// Add a type attribute with the given type.
-  AttrBuilder &addTypeAttr(Attribute::AttrKind Kind, Type *Ty);
 
   /// This turns a byval type into the form used internally in Attribute.
   AttrBuilder &addByValAttr(Type *Ty);

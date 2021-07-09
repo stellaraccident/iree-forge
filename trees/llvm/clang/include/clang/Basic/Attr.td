@@ -2459,11 +2459,6 @@ def SwiftCall : DeclOrTypeAttr {
   let Documentation = [SwiftCallDocs];
 }
 
-def SwiftAsyncCall : DeclOrTypeAttr {
-  let Spellings = [Clang<"swiftasynccall">];
-  let Documentation = [SwiftAsyncCallDocs];
-}
-
 def SwiftContext : ParameterABIAttr {
   let Spellings = [Clang<"swift_context">];
   let Documentation = [SwiftContextDocs];

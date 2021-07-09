@@ -158,11 +158,12 @@ public:
                                      unsigned Index);
 
   InstructionCost getMinMaxReductionCost(VectorType *Ty, VectorType *CondTy,
-                                         bool IsUnsigned,
+                                         bool IsPairwise, bool IsUnsigned,
                                          TTI::TargetCostKind CostKind);
 
   InstructionCost getArithmeticReductionCostSVE(unsigned Opcode,
                                                 VectorType *ValTy,
+                                                bool IsPairwiseForm,
                                                 TTI::TargetCostKind CostKind);
 
   InstructionCost getSpliceCost(VectorType *Tp, int Index);
@@ -305,7 +306,7 @@ public:
                                    ElementCount VF) const;
 
   InstructionCost getArithmeticReductionCost(
-      unsigned Opcode, VectorType *Ty,
+      unsigned Opcode, VectorType *Ty, bool IsPairwiseForm,
       TTI::TargetCostKind CostKind = TTI::TCK_RecipThroughput);
 
   InstructionCost getShuffleCost(TTI::ShuffleKind Kind, VectorType *Tp,

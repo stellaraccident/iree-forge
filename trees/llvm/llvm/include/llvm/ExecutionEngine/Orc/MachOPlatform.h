@@ -17,7 +17,6 @@
 #include "llvm/ExecutionEngine/Orc/Core.h"
 #include "llvm/ExecutionEngine/Orc/ExecutionUtils.h"
 #include "llvm/ExecutionEngine/Orc/ObjectLinkingLayer.h"
-#include "llvm/ExecutionEngine/Orc/Shared/CommonOrcRuntimeTypes.h"
 
 #include <future>
 #include <thread>
@@ -32,13 +31,21 @@ bool objCRegistrationEnabled();
 
 class MachOJITDylibInitializers {
 public:
-  using RawPointerSectionList = std::vector<shared::ExecutorAddressRange>;
+  struct SectionExtent {
+    SectionExtent() = default;
+    SectionExtent(JITTargetAddress Address, uint64_t NumPtrs)
+        : Address(Address), NumPtrs(NumPtrs) {}
+    JITTargetAddress Address = 0;
+    uint64_t NumPtrs = 0;
+  };
+
+  using RawPointerSectionList = std::vector<SectionExtent>;
 
   void setObjCImageInfoAddr(JITTargetAddress ObjCImageInfoAddr) {
     this->ObjCImageInfoAddr = ObjCImageInfoAddr;
   }
 
-  void addModInitsSection(shared::ExecutorAddressRange ModInit) {
+  void addModInitsSection(SectionExtent ModInit) {
     ModInitSections.push_back(std::move(ModInit));
   }
 
@@ -46,7 +53,7 @@ public:
     return ModInitSections;
   }
 
-  void addObjCSelRefsSection(shared::ExecutorAddressRange ObjCSelRefs) {
+  void addObjCSelRefsSection(SectionExtent ObjCSelRefs) {
     ObjCSelRefsSections.push_back(std::move(ObjCSelRefs));
   }
 
@@ -54,7 +61,7 @@ public:
     return ObjCSelRefsSections;
   }
 
-  void addObjCClassListSection(shared::ExecutorAddressRange ObjCClassList) {
+  void addObjCClassListSection(SectionExtent ObjCClassList) {
     ObjCClassListSections.push_back(std::move(ObjCClassList));
   }
 
@@ -111,8 +118,8 @@ private:
                           jitlink::LinkGraph &G,
                           jitlink::PassConfiguration &Config) override;
 
-    SyntheticSymbolDependenciesMap
-    getSyntheticSymbolDependencies(MaterializationResponsibility &MR) override;
+    LocalDependenciesMap getSyntheticSymbolLocalDependencies(
+        MaterializationResponsibility &MR) override;
 
     // FIXME: We should be tentatively tracking scraped sections and discarding
     // if the MR fails.
@@ -129,9 +136,9 @@ private:
 
   private:
     using InitSymbolDepMap =
-        DenseMap<MaterializationResponsibility *, JITLinkSymbolSet>;
+        DenseMap<MaterializationResponsibility *, JITLinkSymbolVector>;
 
-    void preserveInitSectionIfPresent(JITLinkSymbolSet &Symbols,
+    void preserveInitSectionIfPresent(JITLinkSymbolVector &Syms,
                                       jitlink::LinkGraph &G,
                                       StringRef SectionName);
 
@@ -145,9 +152,9 @@ private:
   };
 
   void registerInitInfo(JITDylib &JD, JITTargetAddress ObjCImageInfoAddr,
-                        shared::ExecutorAddressRange ModInits,
-                        shared::ExecutorAddressRange ObjCSelRefs,
-                        shared::ExecutorAddressRange ObjCClassList);
+                        MachOJITDylibInitializers::SectionExtent ModInits,
+                        MachOJITDylibInitializers::SectionExtent ObjCSelRefs,
+                        MachOJITDylibInitializers::SectionExtent ObjCClassList);
 
   ExecutionSession &ES;
   ObjectLinkingLayer &ObjLinkingLayer;

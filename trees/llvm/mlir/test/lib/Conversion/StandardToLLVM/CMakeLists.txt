@@ -5,7 +5,6 @@ add_mlir_library(MLIRTestStandardToLLVM
   EXCLUDE_FROM_LIBMLIR
 
   LINK_LIBS PUBLIC
-  MLIRLLVMCommonConversion
   MLIRLLVMIR
   MLIRLLVMIRTransforms
   MLIRPass

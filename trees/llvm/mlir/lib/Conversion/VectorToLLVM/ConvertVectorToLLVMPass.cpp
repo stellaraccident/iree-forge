@@ -10,8 +10,8 @@
 
 #include "../PassDetail.h"
 
-#include "mlir/Conversion/LLVMCommon/ConversionTarget.h"
-#include "mlir/Conversion/LLVMCommon/TypeConverter.h"
+#include "mlir/Conversion/StandardToLLVM/ConvertStandardToLLVM.h"
+#include "mlir/Conversion/StandardToLLVM/ConvertStandardToLLVMPass.h"
 #include "mlir/Dialect/AMX/AMXDialect.h"
 #include "mlir/Dialect/AMX/Transforms.h"
 #include "mlir/Dialect/ArmNeon/ArmNeonDialect.h"
@@ -62,6 +62,7 @@ void LowerVectorToLLVMPass::runOnOperation() {
   {
     RewritePatternSet patterns(&getContext());
     populateVectorToVectorCanonicalizationPatterns(patterns);
+    populateVectorSlicesLoweringPatterns(patterns);
     populateVectorContractLoweringPatterns(patterns);
     populateVectorTransposeLoweringPatterns(patterns);
     (void)applyPatternsAndFoldGreedily(getOperation(), std::move(patterns));
