@@ -1,0 +1,31 @@
+#!/bin/bash
+# Updates or adds a subtree.
+# Usage:
+#   git iree-update-tree <tree-name> [<ref>]
+# The tree name corresponds to:
+#   - A directory under trees/$TREE_NAME
+#   - A remote ${TREE_NAME}-upstream
+source "$(dirname $0)/bash_script_setup.sh"
+
+function print_usage() {
+  die "Message"
+}
+
+[[ $# -lt 2 ]] || die "Usage: <tree-name> [<ref>]"
+top="$(git rev-parse --show-toplevel)"
+tree_name="$1"
+ref="${2-main}"
+remote="${tree_name}-upstream"
+tree_prefix="trees/${tree_name}"
+tree_dir="${top}/${tree_prefix}"
+message="Merging $ref into $tree_prefix"
+
+if [[ -d "${tree_dir}" ]]; then
+  echo "Updating existing ${tree_prefix} from ${remote} at ${ref}"
+  command="pull"
+else
+  echo "Adding new ${tree_prefix} from ${remote} at ${ref}"
+  command="add"
+fi
+
+git subtree $command "$remote" "$ref" --prefix="$tree_prefix" --squash -m "${message}"
