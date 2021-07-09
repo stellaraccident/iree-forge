@@ -3,21 +3,47 @@
 # Note that it is not intended for all submodules to be checked out and this
 # script manages the list of modules that are required.
 source "$(dirname $0)/bash_script_setup.sh"
+top="$(git rev-parse --show-toplevel)"
 
 declare -A bundled_excludes=(
-  [trees/iree/third_party/llvm-project]=EXCLUDE
   [trees/iree/third_party/mlir-hlo]=EXCLUDE
   [trees/iree/third_party/tensorflow]=EXCLUDE
 )
 
+declare -A redirects=(
+  [trees/iree/third_party/llvm-project]=../../../trees/llvm
+)
+
 # submodule init on bundled submodules we don't do anything special with.
-while read -r unused_commit path
+while read -r unused_commit path unused_extra
 do
   # Skip excludes
   if [[ -v bundled_excludes[$path] ]]; then
     continue
   fi
 
+  # Skip redirects.
+  if [[ -v redirects[$path] ]]; then
+    continue
+  fi
+
   # Init it
+  echo "Initialize $path"
   git submodule init "$path"
 done < <(git submodule status)
+
+# process tree redirects.
+echo "Processing redirects"
+for redirect_from_prefix in ${!redirects[@]}
+do
+  redirect_to_path="${redirects[$redirect_from_prefix]}"
+  redirect_from_path="$top/$redirect_from_prefix"
+  echo "Redirect $redirect_from_path -> $redirect_to_path"
+  if [[ -d "$redirect_from_path" ]]; then
+    rm -Rf "$redirect_from_path"
+  elif [[ -L "$redirect_from_path" ]]; then
+    unlink "$redirect_from_path"
+  fi
+  ln -s "$redirect_to_path" "$redirect_from_path"
+  git update-index --skip-worktree "$redirect_from_path"
+done
