@@ -1,0 +1,23 @@
+#!/bin/bash
+# Initializes bundled submodules in the main and subtrees.
+# Note that it is not intended for all submodules to be checked out and this
+# script manages the list of modules that are required.
+source "$(dirname $0)/bash_script_setup.sh"
+
+declare -A bundled_excludes=(
+  [trees/iree/third_party/llvm-project]=EXCLUDE
+  [trees/iree/third_party/mlir-hlo]=EXCLUDE
+  [trees/iree/third_party/tensorflow]=EXCLUDE
+)
+
+# submodule init on bundled submodules we don't do anything special with.
+while read -r unused_commit path
+do
+  # Skip excludes
+  if [[ -v bundled_excludes[$path] ]]; then
+    continue
+  fi
+
+  # Init it
+  git submodule init "$path"
+done < <(git submodule status)
