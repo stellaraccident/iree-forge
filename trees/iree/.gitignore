@@ -1,0 +1,60 @@
+# Python
+*.pyc
+**/.ipynb_checkpoints/
+.pytype/
+
+# Visual Studio files
+.vs/
+.vscode/
+*.sdf
+*.opensdf
+*.VC.opendb
+*.suo
+*.user
+
+# macOS files
+.DS_Store
+
+# CMake artifacts
+build/
+build-*/
+
+# Bazel artifacts
+**/bazel-*
+
+# Local-only config options
+configured.bazelrc
+user.bazelrc
+version_info.json
+
+# Dear ImGui Ini files
+imgui.ini
+
+# Emacs autosaves
+*~
+\#*\#
+
+# Vim swap files
+[._]*.sw[a-p]
+
+# Source indexing files
+compile_commands.json
+.cache/clangd
+.clangd/
+
+# Pyenv files
+.python-version
+*.venv
+.venv
+
+# Android Studio / Gradle files
+.cxx
+.gradle
+gradlew
+gradlew.bat
+gradle/
+local.properties
+
+# Generated documentation files
+mkdocs/site/
+docs/website/site/
