@@ -1,0 +1,28 @@
+#!/bin/bash
+# Adds all standard remotes for the repository.
+# Usage:
+#   git iree-setup-remotes
+#
+# Does nothing if a remote already exists.
+
+function add_remote() {
+  local remote_name="$1"
+  local head="${2:-main}"
+  local fetch_url="$3"
+  local push_url="${4:-${fetch_url}}"
+  local existing_url="$(git remote get-url ${remote_name} 2>/dev/null)"
+  if [ -z "${existing_url}" ]; then
+    echo "Adding new remote ${remote_name} -> ${fetch_url} (push ${push_url})"
+    git remote add -m "${head}" "${remote_name}" "${fetch_url}"
+    git remote set-url --push "${remote_name}" "${push_url}"
+  else
+    echo "Skipping remote ${remote_name} (already exists)"
+  fi
+}
+
+add_remote iree-upstream main \
+  https://github.com/google/iree.git git@github.com:google/iree.git
+add_remote llvm-upstream main \
+  https://github.com/llvm/llvm-project.git git@github.com:llvm/llvm-project.git
+add_remote mlir-hlo-upstream main \
+  https://github.com/tensorflow/mlir-hlo.git git@github.com:tensorflow/mlir-hlo.git
