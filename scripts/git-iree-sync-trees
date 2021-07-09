@@ -3,6 +3,16 @@
 # Trees exist in a hierarchy of precedence, with the iree tree being at the
 # root, since its version dictates the default refs for dependent trees.
 # The update order is not configurable: it is just specified in code here.
+#
+# Usage:
+#   Sync all trees to default consistent refs:
+#     git iree-sync-trees ALL
+#   Sync a single tree:
+#     git iree-sync-trees llvm-project
+#   Sync a tree to a specific ref:
+#     git iree-sync-trees iree@snapshot-foo
+#   Multiple tree names or ref specs can be specified (or the psuedo-tree
+#   ALL to enable syncing all known trees).
 td="$(dirname $0)"
 source "$td/bash_script_setup.sh"
 
@@ -14,25 +24,40 @@ declare -g -A default_refs=(
 )
 declare -g -A explicit_refs
 declare -g -A discovered_refs
+declare -g -A enabled_trees
 
 # Parse all positional arguments and populate explicit_refs. Each is of the
 # form tree@ref
 for posarg in "$@"
 do
-  if [[ $posarg =~ ^([^@])@(.+)$ ]]; then
+  if [[ $posarg == "ALL" ]]; then
+    for tree in "${!default_refs[@]}"
+    do
+      enabled_trees[$tree]="ON"
+    done
+    continue
+  elif [[ $posarg =~ ^([^@])@(.+)$ ]]; then
     tree="${BASH_REMATCH[1]}"
     ref="${BASH_REMATCH[2]}"
-    if ! [[ -v default_refs[$tree] ]]; then
-      die "Unrecognized tree on command line: $posarg"
-    fi
-    echo "Command line pinned tree $tree@$ref"
+  else
+    tree="$posarg"
+    ref=""
+  fi
+
+  if ! [[ -v default_refs[$tree] ]]; then
+    die "Unrecognized tree on command line: $posarg"
+  fi
+  echo "Command line pinned tree $tree@$ref"
+  if ! [[ -z $ref ]]; then
     explicit_refs[$tree]="$ref"
   fi
+  enabled_trees[$tree]="ON"
 done
 
 function sync_tree() {
   local tree_name="$1"
   local sync_ref=""
+
   if [[ -v explicit_refs[$tree_name] ]]; then
     sync_ref="${explicit_refs[$tree_name]}"
   fi
@@ -42,16 +67,38 @@ function sync_tree() {
   if [[ -z $sync_ref ]] && [[ -v default_refs[$tree_name] ]]; then
     sync_ref="${default_refs[$tree_name]}"
   fi
-
   ! [[ -z $sync_ref ]] || die "Could not determine sync ref for $tree_name"
+
+  if ! [[ -v enabled_trees[$tree_name] ]]; then
+    echo "Skipping sync of tree $tree_name not enabled (would have synced to $sync_ref)"
+    return 0
+  fi
+
   echo "Syncing tree $tree_name@$sync_ref"
   $td/git-iree-update-tree "$tree_name" "$sync_ref"
 }
 
+# Reads a submodule commit directly from the index for a path. This bypasses
+# various bits of machinery that we would rather not use.
+function find_submodule_ref() {
+  local submodule_path="$1"
+  local mode
+  local commit
+  local unused
+  while read -r mode commit unused
+  do
+    if [[ $mode -ne 160000 ]]; then
+      die "Submodule path $submodule_path does not appear to be a submodule: mode=$mode"
+    fi
+    echo "$commit"
+    break
+  done < <(git ls-files -s "$submodule_path")
+}
+
 # Perform updates.
 sync_tree iree
-discovered_refs["llvm-project"] = "$(find_submodule_ref trees/iree/third_party/llvm-project)"
-discovered_refs["mlir-hlo"] = "$(find_submodule_ref trees/iree/third_party/mlir-hlo)"
+discovered_refs["llvm-project"]="$(find_submodule_ref trees/iree/third_party/llvm-project)"
+discovered_refs["mlir-hlo"]="$(find_submodule_ref trees/iree/third_party/mlir-hlo)"
 
 sync_tree llvm-project
 sync_tree mlir-hlo
