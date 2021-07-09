@@ -1,0 +1,11 @@
+*.swp
+.vscode
+.env
+*.code-workspace
+
+build
+build-mlir
+install-mlir
+__pycache__
+
+.pytype
