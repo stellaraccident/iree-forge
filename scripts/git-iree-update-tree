@@ -28,4 +28,12 @@ git subtree $command "$remote" "$ref" --prefix="$tree_prefix" --squash -m "${mes
 
 # Sync any submodules.
 "$(dirname $0)/git-iree-import-submodules" "$tree_name"
-
+modules="$top/.gitmodules"
+if [[ -f "$modules" ]]; then
+  git add "$modules"
+  changes="$(git status --porcelain)"
+  if ! [[ -z $changes ]]; then
+    echo "Changes made to .gitmodules. Committing."
+    git commit -m "Sync .gitmodules for tree $tree_prefix"
+  fi
+fi
