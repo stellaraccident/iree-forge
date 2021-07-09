@@ -28,4 +28,5 @@ add_remote llvm-project-upstream main \
   https://github.com/llvm/llvm-project.git git@github.com:llvm/llvm-project.git
 add_remote mlir-hlo-upstream master \
   https://github.com/tensorflow/mlir-hlo.git git@github.com:tensorflow/mlir-hlo.git
-
+add_remote mlir-npcomp main \
+  https://github.com/llvm/mlir-npcomp.git git@github.com:llvm/mlir-npcomp.git
