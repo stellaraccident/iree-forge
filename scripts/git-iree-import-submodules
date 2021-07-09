@@ -1,0 +1,59 @@
+#!/bin/bash
+# Imports submodules from a tree into the top-level .gitmodules file,
+# rewriting prefixes as needed. We work around submodules in various ways,
+# but they all depend on the submodules being accessible and working.
+# Usage:
+#   git iree-import-submodules <tree-name>
+source "$(dirname $0)/bash_script_setup.sh"
+
+[[ $# -eq 1 ]] || die "Usage: <tree-name>"
+top="$(git rev-parse --show-toplevel)"
+tree_name="$1"
+tree_prefix="trees/$tree_name"
+tree_dir="$top/$tree_prefix"
+tree_modules="$tree_dir/.gitmodules"
+main_modules="$top/.gitmodules"
+
+[[ -d $tree_dir ]] || die "Tree does not exist: $tree_dir"
+if ! [[ -f $tree_modules ]]; then
+  # Tree has no submodules. Fine.
+  exit 0
+fi
+
+# Now list each config setting and rewrite.
+# Lines will be like:
+#   submodule.third_party/googletest.path=third_party/googletest
+#   submodule.third_party/googletest.url=https://github.com/google/googletest.git
+# We must rewrite the keys to be subtree relative, and the value for the .path.
+declare -A populated_entries
+while IFS='=' read -r key value
+do
+  if [[ $key =~ ^submodule\.(.+)\.([^\.]+)$ ]]; then
+    key_path="${BASH_REMATCH[1]}"
+    sub_key="${BASH_REMATCH[2]}"
+    main_key="submodule.${tree_prefix}/${key_path}.${sub_key}"
+    main_value="$value"
+    if [[ $sub_key == "path" ]]; then
+      main_value="${tree_prefix}/${value}"
+    fi
+
+    # Set it in the main modules.
+    git config -f "$main_modules" --replace-all "$main_key" "$main_value"
+
+    # And remember it so we can prune later.
+    populated_entries[$main_key]="$main_value"
+  fi
+done < <(git config -f "$tree_modules" --list)
+
+# Now iterate over the settings in the main modules and prune any stale
+# entries.
+while IFS='=' read -r key value
+do
+  if [[ $key == submodule.${tree_prefix}/* ]]; then
+    if ! [[ -v populated_entries[$key] ]]; then
+      echo "Delete stale .gitmodules key $key"
+      git config -f "$main_modules" --unset-all "$key"
+    fi
+  fi
+done < <(git config -f "$main_modules" --list)
+
