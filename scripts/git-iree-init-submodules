@@ -12,6 +12,7 @@ declare -A bundled_excludes=(
 
 declare -A redirects=(
   [trees/iree/third_party/llvm-project]=../../../trees/llvm
+  [trees/iree/third_party/mlir-hlo]=../../../trees/mlir-hlo
 )
 
 # submodule init on bundled submodules we don't do anything special with.
