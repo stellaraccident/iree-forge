@@ -955,13 +955,13 @@ def HLO_AllReduceOp : HLO_Op<"all_reduce",
   let hasCustomHLOConverter = 1;
 }
 
-def HLO_ReduceScatterOp : HLO_Op<"reduce_scatter",
+def HLO_AllReduceScatterOp : HLO_Op<"all_reduce_scatter",
     [SameOperandsAndResultElementType]> {
-  let summary = "ReduceScatter operator";
+  let summary = "AllReduceScatter operator";
   let description = [{
      Performs all_reduce followed by a scatter.
 
-     See https://www.tensorflow.org/xla/operation_semantics#reducescatter
+     See https://www.tensorflow.org/xla/operation_semantics#allreducescatter
   }];
 
   let arguments = (ins
