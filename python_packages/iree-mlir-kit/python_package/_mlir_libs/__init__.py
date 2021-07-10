@@ -23,3 +23,8 @@ def get_include_dirs():
 
 def get_library_dirs():
   return [_this_dir]
+
+
+def get_api_libraries():
+  # TODO: detect proper extension.
+  return os.path.join(_this_dir, "libIREEMLIRKitPublicAPI.so")
