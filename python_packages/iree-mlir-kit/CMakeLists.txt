@@ -1,4 +1,4 @@
-# Copyright 2019 The IREE Authors
+# Copyright 2021 The IREE Authors
 #
 # Licensed under the Apache License v2.0 with LLVM Exceptions.
 # See https://llvm.org/LICENSE.txt for license information.
@@ -15,7 +15,7 @@ if(CCACHE_PROGRAM)
 endif()
 
 # CMake settings.
-set(BUILD_SHARED_LIBS ON CACHE BOOL "Shared libs are required")
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "We are actually building a static mondo-lib")
 set(CMAKE_PLATFORM_NO_VERSIONED_SONAME ON CACHE BOOL "Python soname linked libraries are bad")
 set(CMAKE_VISIBILITY_INLINES_HIDDEN ON CACHE BOOL "Hide inlines")
 
@@ -36,20 +36,6 @@ set(MLIR_BINDINGS_PYTHON_LOCK_VERSION OFF CACHE BOOL "Disable linking against li
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
 # LLVM configuration.
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/llvm")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/llvm" EXCLUDE_FROM_ALL)
 
-#-------------------------------------------------------------------------------
-# Installation targets
-#-------------------------------------------------------------------------------
-
-add_custom_target(
-  install-iree-mlir-kit-mlir-python-deps
-  DEPENDS
-  install-mlir-headers
-  install-MLIRBindingsPythonSources
-  install-MLIRBindingsPythonDialects
-  install-MLIRPublicAPI
-  # Python extensions.
-  install-MLIRCoreBindingsPythonExtension
-  install-MLIRTransformsBindingsPythonExtension
-)
+add_subdirectory(python_package)
