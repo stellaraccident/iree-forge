@@ -105,6 +105,21 @@ set(MLIR_BINDINGS_PYTHON_LOCK_VERSION 1 CACHE BOOL
        "Links to specific python libraries, resolving all symbols.")
 
 if(MLIR_ENABLE_BINDINGS_PYTHON)
+  set(_MLIR_BINDINGS_PYTHON_LINK_API_DYLIBS_DEFAULT)
+  if(BUILD_SHARED_LIBS)
+    set(_MLIR_BINDINGS_PYTHON_LINK_API_DYLIBS_DEFAULT "MLIRPublicAPI")
+  endif()
+  set(MLIR_BINDINGS_PYTHON_LINK_API_DYLIBS
+    "${_MLIR_BINDINGS_PYTHON_LINK_API_DYLIBS_DEFAULT}" CACHE STRING
+    "List of dylib targets to link the python extensions against. Defaults to MLIRPublicAPI if configured for shared library building.")
+
+  if(NOT MLIR_BINDINGS_PYTHON_LINK_API_DYLIBS AND NOT LLVM_BUILD_LLVM_DYLIB)
+    message(SEND_ERROR
+      "MLIR_ENABLE_BINDINGS_PYTHON is ON but the project is not configured for "
+      "dynamic linking (and there is not an explicit "
+      "MLIR_BINDINGS_PYTHON_LINK_API_DYLIBS list of dylibs set)")
+  endif()
+
   include(MLIRDetectPythonEnv)
   find_package(Python3 ${LLVM_MINIMUM_PYTHON_VERSION}
     COMPONENTS Interpreter Development NumPy REQUIRED)

@@ -17,7 +17,9 @@ endif()
 # CMake settings.
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "We are actually building a static mondo-lib")
 set(CMAKE_PLATFORM_NO_VERSIONED_SONAME ON CACHE BOOL "Python soname linked libraries are bad")
-set(CMAKE_VISIBILITY_INLINES_HIDDEN ON CACHE BOOL "Hide inlines")
+set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
+set(CMAKE_C_VISIBILITY_PRESET hidden)
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 # Required LLVM settings.
 set(LLVM_ENABLE_PROJECTS mlir CACHE STRING "LLVM projects")
@@ -29,13 +31,29 @@ set(LLVM_INCLUDE_EXAMPLES OFF CACHE BOOL "Disable examples")
 set(LLVM_INCLUDE_TOOLS ON CACHE BOOL "Disable tools")
 set(LLVM_INCLUDE_TESTS ON CACHE BOOL "Disable tests")
 
-# Requited MLIR settings.
-set(MLIR_ENABLE_BINDINGS_PYTHON ON CACHE BOOL "Enable MLIR python bindings")
-set(MLIR_BINDINGS_PYTHON_LOCK_VERSION OFF CACHE BOOL "Disable linking against libpython")
+# External projects.
+set(LLVM_EXTERNAL_PROJECTS "mlir_hlo" CACHE STRING "External LLVM projects" FORCE)
+set(LLVM_EXTERNAL_MLIR_HLO_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/mlir-hlo")
+
+# Required MLIR settings.
+set(MLIR_ENABLE_BINDINGS_PYTHON ON CACHE BOOL "Enable MLIR python bindings" FORCE)
+set(MLIR_BINDINGS_PYTHON_LOCK_VERSION OFF CACHE BOOL "Disable linking against libpython" FORCE)
+set(MLIR_BINDINGS_PYTHON_LINK_API_DYLIBS "IREEMLIRKitPublicAPI" CACHE STRING "Override link dylibs" FORCE)
+
+# mlir-hlo settings.
+set(MHLO_BUILD_EMBEDDED ON)
 
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
-# LLVM configuration.
+# LLVM projects.
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/llvm" EXCLUDE_FROM_ALL)
+#add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/mlir_hlo" EXCLUDE_FROM_ALL)
 
+# Configure ourselves to use the bundled LLVM build system.
+# TODO: Better way for this?
+set(LLVM_MAIN_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/llvm")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/llvm/cmake/modules")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/mlir/cmake/modules")
+
+# Must come last.
 add_subdirectory(python_package)

@@ -3,28 +3,50 @@
 # Licensed under the Apache License v2.0 with LLVM Exceptions.
 # See https://llvm.org/LICENSE.txt for license information.
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+include(AddMLIR)
+
+################################################################################
+# Mondo exports library
+################################################################################
+
+add_mlir_c_api_export_library(
+  IREEMLIRKitPublicAPI
+  SHARED
+  MLIR_CAPI_GROUPS
+    CORE
+    MLIRHLO
+)
+
+################################################################################
+# Package setup
+################################################################################
 
 set(_python_mlir_install_prefix "python_package")
 set(_install_library_targets
-  MLIRPublicAPI
-  MLIRCoreBindingsPythonExtension
+  # Mondo API library.
+  IREEMLIRKitPublicAPI
+
+  # MLIR
   MLIRAllPassesRegistrationBindingsPythonExtension
   MLIRAsyncPassesBindingsPythonExtension
-  MLIRSparseTensorPassesBindingsPythonExtension
+  MLIRConversionsBindingsPythonExtension
+  MLIRCoreBindingsPythonExtension
   MLIRGPUPassesBindingsPythonExtension
   MLIRLinalgPassesBindingsPythonExtension
+  MLIRSparseTensorPassesBindingsPythonExtension
+  MLIRTransformsBindingsPythonExtension
+
+  # mlir-hlo
+  MLIRHLOCoreBindingsPythonExtension
 )
 
 add_custom_target(
   PythonPackage ALL
   DEPENDS
     MLIRBindingsPythonSources
+    MLIRHLOBindingsPythonMhloOps
     ${_install_library_targets}
 )
-
-################################################################################
-# Override some RPATH handling for libraries we are installing
-################################################################################
 
 set_target_properties(
   ${_install_library_targets}
@@ -38,6 +60,13 @@ set_target_properties(
 
 install(
   DIRECTORY ${CMAKE_BINARY_DIR}/llvm/python/mlir
+  DESTINATION ${_python_mlir_install_prefix}
+  COMPONENT PythonSources
+  FILES_MATCHING PATTERN "*.py"
+)
+
+install(
+  DIRECTORY ${CMAKE_BINARY_DIR}/llvm/python/mlir_hlo
   DESTINATION ${_python_mlir_install_prefix}
   COMPONENT PythonSources
   FILES_MATCHING PATTERN "*.py"

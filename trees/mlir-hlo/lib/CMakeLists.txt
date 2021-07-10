@@ -14,5 +14,7 @@
 # limitations under the License.
 #
 add_subdirectory(Analysis)
+add_subdirectory(CAPI)
+add_subdirectory(Bindings/Python)
 add_subdirectory(Dialect)
 add_subdirectory(utils)

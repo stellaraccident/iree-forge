@@ -99,7 +99,8 @@ function(add_mlir_python_extension libname extname)
   # if further dependencies are added explicitly.
   target_link_libraries(${libname}
     PRIVATE
-    MLIRPublicAPI
+    ${MLIR_BINDINGS_PYTHON_LINK_API_DYLIBS}
+    # TODO: Do we still need LLVMSupport?
     LLVMSupport
     ${ARG_LINK_LIBS}
     ${PYEXT_LIBADD}
@@ -139,9 +140,13 @@ endfunction()
 function(add_mlir_dialect_python_bindings tblgen_target)
   cmake_parse_arguments(ARG
     ""
-    "TD_FILE;DIALECT_NAME"
+    "TD_FILE;DIALECT_NAME;PACKAGE_PATH"
     "DEPENDS"
     ${ARGN})
+
+  if(NOT ARG_PACKAGE_PATH)
+    set(ARG_PACKAGE_PATH "mlir/dialects")
+  endif()
 
   set(dialect_filename "_${ARG_DIALECT_NAME}_ops_gen.py")
   set(LLVM_TARGET_DEFINITIONS ${ARG_TD_FILE})
@@ -153,12 +158,13 @@ function(add_mlir_dialect_python_bindings tblgen_target)
     add_dependencies(${tblgen_target} ${ARG_DEPENDS})
   endif()
 
+  set(_global_output_file "${PROJECT_BINARY_DIR}/python/${ARG_PACKAGE_PATH}/${dialect_filename}")
   add_custom_command(
     TARGET ${tblgen_target} POST_BUILD
     COMMENT "Copying generated python source \"dialects/${dialect_filename}\""
-    BYPRODUCTS "${PROJECT_BINARY_DIR}/python/mlir/dialects/${dialect_filename}"
+    BYPRODUCTS "${_global_output_file}"
     COMMAND "${CMAKE_COMMAND}" -E copy_if_different
       "${CMAKE_CURRENT_BINARY_DIR}/${dialect_filename}"
-      "${PROJECT_BINARY_DIR}/python/mlir/dialects/${dialect_filename}")
+      "${_global_output_file}")
 endfunction()
 

@@ -167,8 +167,18 @@ endfunction()
 # This shared library is built regardless of the overall setting of building
 # libMLIR.so (which exports the C++ implementation).
 function(add_mlir_public_c_api_library name)
+  cmake_parse_arguments(ARG
+    ""
+    "MLIR_CAPI_GROUP"
+    ""
+    ${ARGN})
+
+  if(NOT ARG_MLIR_CAPI_GROUP)
+    set(ARG_MLIR_CAPI_GROUP "CORE")
+  endif()
+
   add_mlir_library(${name}
-    ${ARGN}
+    ${ARG_UNPARSED_ARGUMENTS}
     # NOTE: Generates obj.${name} which is used for shared library building.
     OBJECT
     EXCLUDE_FROM_LIBMLIR
@@ -186,7 +196,62 @@ function(add_mlir_public_c_api_library name)
     PRIVATE
     -DMLIR_CAPI_BUILDING_LIBRARY=1
   )
-  set_property(GLOBAL APPEND PROPERTY MLIR_PUBLIC_C_API_LIBS ${name})
+  set_property(GLOBAL APPEND PROPERTY MLIR_PUBLIC_C_API_LIBS_${ARG_MLIR_CAPI_GROUP} ${name})
+endfunction()
+
+function(add_mlir_c_api_export_library name)
+  cmake_parse_arguments(ARG
+    "SHARED;STATIC"
+    ""
+    "MLIR_CAPI_GROUPS"
+    ${ARGN})
+  # Accumulate deps and objects.
+  set(_deps "")
+  set(_objects "")
+  foreach(group ${ARG_MLIR_CAPI_GROUPS})
+    get_property(public_api_libs GLOBAL PROPERTY MLIR_PUBLIC_C_API_LIBS_${group})
+
+    foreach(lib ${public_api_libs})
+      if(XCODE)
+        # Xcode doesn't support object libraries, so we have to trick it into
+        # linking the static libraries instead.
+        list(APPEND _deps "-force_load" ${lib})
+      else()
+        list(APPEND _objects $<TARGET_OBJECTS:obj.${lib}>)
+      endif()
+      # Accumulate transitive deps of each exported lib into _DEPS.
+      list(APPEND _deps  $<TARGET_PROPERTY:${lib},LINK_LIBRARIES>)
+    endforeach()
+  endforeach()
+
+  set(_options)
+  if(ARG_SHARED)
+    list(APPEND _options "SHARED")
+  endif()
+  if(ARG_STATIC)
+    list(APPEND _options "STATIC")
+  endif()
+
+  message(STATUS "MLIR CAPI Export Lib ${name} \n  objects: ${_objects}\n  deps: ${_deps}")
+  add_mlir_library(${name}
+    ${_options}
+    ${_objects}
+    ${LLVM_MAIN_SRC_DIR}/cmake/dummy.cpp  # Makes CMake happy.
+    EXCLUDE_FROM_LIBMLIR
+    PARTIAL_SOURCES_INTENDED
+    LINK_LIBS
+    # Dependency on the implementation shared library.
+    $<$<BOOL:${LLVM_BUILD_LLVM_DYLIB}>:MLIR>
+    ${_deps}
+  )
+
+  target_link_options(
+    ${name}
+    PRIVATE
+      # On Linux, disable re-export of any static linked libraries that
+      # came through.
+      $<$<PLATFORM_ID:Linux>:LINKER:--exclude-libs,ALL>
+  )
 endfunction()
 
 # Declare the library associated with a dialect.
