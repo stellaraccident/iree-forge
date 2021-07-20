@@ -653,7 +653,7 @@ void SPIRVConvertToGPUPass::runOnOperation() {
   // Reshape ops are treated legal since they just change the way the underlying
   // buffer is viewed. These are legalized downstream. They become no ops when
   // lowering to SPIR-V since the SPIR-V code uses linearized arrays.
-  target.addLegalOp<linalg::CollapseShapeOp, linalg::ExpandShapeOp>();
+  target.addLegalOp<memref::CollapseShapeOp, memref::ExpandShapeOp>();
   // Let the rest fall through.
   target.markUnknownOpDynamicallyLegal([](Operation *) { return true; });
 
@@ -677,7 +677,7 @@ void SPIRVConvertToGPUPass::runOnOperation() {
   }
 }
 
-std::unique_ptr<OperationPass<IREE::HAL::ExecutableTargetOp>>
+std::unique_ptr<OperationPass<IREE::HAL::ExecutableVariantOp>>
 createSPIRVConvertToGPUPass() {
   return std::make_unique<SPIRVConvertToGPUPass>();
 }

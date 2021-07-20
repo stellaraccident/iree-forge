@@ -4,7 +4,7 @@
 # See https://llvm.org/LICENSE.txt for license information.
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-load("//build_tools/bazel:tblgen.bzl", "gentbl_cc_library")
+load("@llvm-project//mlir:tblgen.bzl", "gentbl_cc_library")
 load("//iree:build_defs.oss.bzl", "iree_cmake_extra_content")
 
 package(
@@ -23,7 +23,7 @@ gentbl_cc_library(
     ],
     tblgen = "@llvm-project//mlir:mlir-tblgen",
     td_file = "Passes.td",
-    td_srcs = [
+    deps = [
         "@llvm-project//mlir:PassBaseTdFiles",
     ],
 )
@@ -43,6 +43,7 @@ cc_library(
         "FusionOfTensorOps.cpp",
         "HoistUnstreamableOps.cpp",
         "InjectDispatchTracing.cpp",
+        "InterchangeGenericOp.cpp",
         "OutlineDispatchRegions.cpp",
         "OutlineLargeConstants.cpp",
         "PadLinalgOps.cpp",
@@ -71,6 +72,7 @@ cc_library(
         "//iree/compiler/Utils",
         "@llvm-project//llvm:Support",
         "@llvm-project//mlir:Affine",
+        "@llvm-project//mlir:DialectUtils",
         "@llvm-project//mlir:IR",
         "@llvm-project//mlir:LinalgOps",
         "@llvm-project//mlir:LinalgTransforms",
