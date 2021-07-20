@@ -7,7 +7,7 @@
 #ifndef IREE_COMPILER_CODEGEN_LLVMGPU_COMMON_H_
 #define IREE_COMPILER_CODEGEN_LLVMGPU_COMMON_H_
 
-#include "mlir/Conversion/StandardToLLVM/ConvertStandardToLLVM.h"
+#include "mlir/Conversion/LLVMCommon/Pattern.h"
 
 namespace mlir {
 namespace iree_compiler {
@@ -17,6 +17,9 @@ void populateLLVMConversionPatterns(MLIRContext *context,
                                     LLVMTypeConverter &converter, bool useROCM);
 
 void populateScalarizeMathOps(RewritePatternSet &patterns);
+
+/// Add patterns to convert AllocOp of shared memory to a global variable.
+void populateConvertSharedMemoryAllocOps(RewritePatternSet &patterns);
 
 }  // namespace iree_compiler
 }  // namespace mlir

@@ -556,6 +556,35 @@ IREE_VM_ABI_EXPORT(iree_hal_module_command_buffer_end,  //
   return iree_hal_command_buffer_end(command_buffer);
 }
 
+IREE_VM_ABI_EXPORT(iree_hal_module_command_buffer_begin_debug_group,  //
+                   iree_hal_module_state_t,                           //
+                   rr, v) {
+  iree_hal_command_buffer_t* command_buffer = NULL;
+  IREE_RETURN_IF_ERROR(
+      iree_hal_command_buffer_check_deref(args->r0, &command_buffer));
+  iree_vm_buffer_t* label = NULL;
+  IREE_RETURN_IF_ERROR(iree_vm_buffer_check_deref(args->r1, &label));
+  iree_string_view_t label_str = iree_vm_buffer_as_string(label);
+  // TODO(benvanik): query from VM.
+  iree_hal_label_location_t location = {
+      .file = iree_string_view_empty(),
+      .line = 0,
+  };
+  iree_hal_command_buffer_begin_debug_group(
+      command_buffer, label_str, iree_hal_label_color_unspecified(), &location);
+  return iree_ok_status();
+}
+
+IREE_VM_ABI_EXPORT(iree_hal_module_command_buffer_end_debug_group,  //
+                   iree_hal_module_state_t,                         //
+                   r, v) {
+  iree_hal_command_buffer_t* command_buffer = NULL;
+  IREE_RETURN_IF_ERROR(
+      iree_hal_command_buffer_check_deref(args->r0, &command_buffer));
+  iree_hal_command_buffer_end_debug_group(command_buffer);
+  return iree_ok_status();
+}
+
 IREE_VM_ABI_EXPORT(iree_hal_module_command_buffer_execution_barrier,  //
                    iree_hal_module_state_t,                           //
                    riii, v) {
@@ -827,32 +856,21 @@ IREE_VM_ABI_EXPORT(iree_hal_module_device_allocator,  //
 
 IREE_VM_ABI_EXPORT(iree_hal_module_device_query_i32,  //
                    iree_hal_module_state_t,           //
-                   rr, ii) {
+                   rrr, ii) {
   iree_hal_device_t* device = NULL;
   IREE_RETURN_IF_ERROR(iree_hal_device_check_deref(args->r0, &device));
+  iree_vm_buffer_t* ns = NULL;
+  IREE_RETURN_IF_ERROR(iree_vm_buffer_check_deref(args->r1, &ns));
+  iree_string_view_t category_str = iree_vm_buffer_as_string(ns);
   iree_vm_buffer_t* key = NULL;
-  IREE_RETURN_IF_ERROR(iree_vm_buffer_check_deref(args->r1, &key));
+  IREE_RETURN_IF_ERROR(iree_vm_buffer_check_deref(args->r2, &key));
   iree_string_view_t key_str = iree_vm_buffer_as_string(key);
 
   int32_t value = 0;
   iree_status_t query_status =
-      iree_hal_device_query_i32(device, key_str, &value);
+      iree_hal_device_query_i32(device, category_str, key_str, &value);
   rets->i0 = iree_status_consume_code(query_status) == IREE_STATUS_OK ? 1 : 0;
   rets->i1 = (int32_t)value;
-  return iree_ok_status();
-}
-
-IREE_VM_ABI_EXPORT(iree_hal_module_device_match_id,  //
-                   iree_hal_module_state_t,          //
-                   rr, i) {
-  iree_hal_device_t* device = NULL;
-  IREE_RETURN_IF_ERROR(iree_hal_device_check_deref(args->r0, &device));
-  iree_vm_buffer_t* pattern = NULL;
-  IREE_RETURN_IF_ERROR(iree_vm_buffer_check_deref(args->r1, &pattern));
-  iree_string_view_t pattern_str = iree_vm_buffer_as_string(pattern);
-
-  iree_string_view_t device_id = iree_hal_device_id(device);
-  rets->i0 = iree_string_view_match_pattern(device_id, pattern_str) ? 1 : 0;
   return iree_ok_status();
 }
 

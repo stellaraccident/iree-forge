@@ -10,6 +10,11 @@
 #include "iree/compiler/Codegen/Utils/Utils.h"
 #include "iree/compiler/Dialect/IREE/IR/IREEOps.h"
 #include "mlir/Conversion/GPUToNVVM/GPUToNVVMPass.h"
+#include "mlir/Conversion/LLVMCommon/ConversionTarget.h"
+#include "mlir/Conversion/LLVMCommon/LoweringOptions.h"
+#include "mlir/Conversion/LLVMCommon/TypeConverter.h"
+#include "mlir/Conversion/MathToLLVM/MathToLLVM.h"
+#include "mlir/Conversion/MemRefToLLVM/MemRefToLLVM.h"
 #include "mlir/Conversion/StandardToLLVM/ConvertStandardToLLVM.h"
 #include "mlir/Conversion/VectorToLLVM/ConvertVectorToLLVM.h"
 #include "mlir/Dialect/GPU/Passes.h"
@@ -47,13 +52,14 @@ struct ConvertToNVVMPass : public ConvertToNVVMBase<ConvertToNVVMPass> {
     {
       OwningRewritePatternList patterns(&getContext());
       populateScalarizeMathOps(patterns);
+      populateConvertSharedMemoryAllocOps(patterns);
       vector::populateVectorToVectorCanonicalizationPatterns(patterns);
-      vector::populateVectorSlicesLoweringPatterns(patterns);
       vector::populateVectorContractLoweringPatterns(
           patterns,
           vector::VectorTransformsOptions().setVectorTransformsOptions(
               vector::VectorContractLowering::OuterProduct));
       mlir::vector::populateVectorTransposeLoweringPatterns(patterns);
+      mlir::vector::populateVectorTransferLoweringPatterns(patterns);
       (void)applyPatternsAndFoldGreedily(m, std::move(patterns));
     }
     {
@@ -65,6 +71,8 @@ struct ConvertToNVVMPass : public ConvertToNVVMBase<ConvertToNVVMPass> {
       OwningRewritePatternList llvmPatterns(&getContext());
       populateLLVMConversionPatterns(&getContext(), llvmPatterns, converter,
                                      false);
+      populateMathToLLVMConversionPatterns(converter, llvmPatterns);
+      populateMemRefToLLVMConversionPatterns(converter, llvmPatterns);
       populateStdToLLVMConversionPatterns(converter, llvmPatterns);
       populateVectorToLLVMConversionPatterns(converter, llvmPatterns);
       populateGpuToNVVMConversionPatterns(converter, llvmPatterns);

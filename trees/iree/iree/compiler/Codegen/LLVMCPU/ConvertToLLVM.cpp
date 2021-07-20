@@ -17,7 +17,13 @@
 #include "llvm/Support/raw_ostream.h"
 #include "mlir/Analysis/DataLayoutAnalysis.h"
 #include "mlir/Conversion/AffineToStandard/AffineToStandard.h"
+#include "mlir/Conversion/LLVMCommon/ConversionTarget.h"
+#include "mlir/Conversion/LLVMCommon/LoweringOptions.h"
+#include "mlir/Conversion/LLVMCommon/Pattern.h"
+#include "mlir/Conversion/LLVMCommon/TypeConverter.h"
 #include "mlir/Conversion/LinalgToLLVM/LinalgToLLVM.h"
+#include "mlir/Conversion/MathToLLVM/MathToLLVM.h"
+#include "mlir/Conversion/MemRefToLLVM/MemRefToLLVM.h"
 #include "mlir/Conversion/SCFToStandard/SCFToStandard.h"
 #include "mlir/Conversion/StandardToLLVM/ConvertStandardToLLVM.h"
 #include "mlir/Conversion/StandardToLLVM/ConvertStandardToLLVMPass.h"
@@ -275,9 +281,11 @@ class HALDispatchABI {
   }
 
   Value getIndexValue(Location loc, int64_t value, OpBuilder &builder) {
-    return builder.createOrFold<LLVM::DialectCastOp>(
-        loc, typeConverter->convertType(builder.getIndexType()),
+    SmallVector<Value> folded;
+    builder.createOrFold<UnrealizedConversionCastOp>(
+        folded, loc, typeConverter->convertType(builder.getIndexType()),
         builder.createOrFold<ConstantIndexOp>(loc, value));
+    return folded.front();
   }
 
   Value castValueToType(Location loc, Value value, Type resultType,
@@ -651,7 +659,6 @@ void ConvertToLLVMPass::runOnOperation() {
   {
     OwningRewritePatternList patterns(&getContext());
     vector::populateVectorToVectorCanonicalizationPatterns(patterns);
-    vector::populateVectorSlicesLoweringPatterns(patterns);
     vector::populateVectorContractLoweringPatterns(patterns);
     vector::populateVectorTransposeLoweringPatterns(patterns);
     (void)applyPatternsAndFoldGreedily(getOperation(), std::move(patterns));
@@ -696,6 +703,8 @@ void ConvertToLLVMPass::runOnOperation() {
   populateLoopToStdConversionPatterns(patterns);
   populateExpandTanhPattern(patterns);
 
+  populateMathToLLVMConversionPatterns(converter, patterns);
+  populateMemRefToLLVMConversionPatterns(converter, patterns);
   populateStdToLLVMConversionPatterns(converter, patterns);
   populateVectorToSCFConversionPatterns(patterns);
   populateVectorToLLVMMatrixConversionPatterns(converter, patterns);
@@ -724,6 +733,7 @@ void ConvertToLLVMPass::runOnOperation() {
   target.addIllegalDialect<ShapeDialect, StandardOpsDialect, IREEDialect,
                            IREE::HAL::HALDialect, math::MathDialect,
                            tosa::TosaDialect>();
+  target.addIllegalOp<UnrealizedConversionCastOp>();
 
   // Don't apply patterns to private function (e.g num_workgroups func).
   target.addDynamicallyLegalOp<FuncOp>([&](FuncOp funcOp) {
