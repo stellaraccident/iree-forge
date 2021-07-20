@@ -184,6 +184,7 @@ set(files
   __ranges/access.h
   __ranges/all.h
   __ranges/concepts.h
+  __ranges/copyable_box.h
   __ranges/data.h
   __ranges/drop_view.h
   __ranges/empty_view.h
@@ -193,6 +194,7 @@ set(files
   __ranges/ref_view.h
   __ranges/size.h
   __ranges/subrange.h
+  __ranges/transform_view.h
   __ranges/view_interface.h
   __split_buffer
   __std_stream
@@ -236,6 +238,7 @@ set(files
   __utility/rel_ops.h
   __utility/swap.h
   __utility/to_underlying.h
+  __variant/monostate.h
   algorithm
   any
   array

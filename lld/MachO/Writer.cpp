@@ -76,10 +76,6 @@ public:
 
   LCUuid *uuidCommand = nullptr;
   OutputSegment *linkEditSegment = nullptr;
-
-  // Output sections are added to output segments in iteration order
-  // of ConcatOutputSection, so must have deterministic iteration order.
-  MapVector<NamePair, ConcatOutputSection *> concatOutputSections;
 };
 
 // LC_DYLD_INFO_ONLY stores the offsets of symbol import/export information.
@@ -467,7 +463,7 @@ public:
     c->ntools = ntools;
     auto *t = reinterpret_cast<build_tool_version *>(&c[1]);
     t->tool = TOOL_LD;
-    t->version = encodeVersion(llvm::VersionTuple(
+    t->version = encodeVersion(VersionTuple(
         LLVM_VERSION_MAJOR, LLVM_VERSION_MINOR, LLVM_VERSION_PATCH));
   }
 
@@ -666,15 +662,17 @@ void Writer::scanSymbols() {
 
 // TODO: ld64 enforces the old load commands in a few other cases.
 static bool useLCBuildVersion(const PlatformInfo &platformInfo) {
-  static const std::map<PlatformKind, llvm::VersionTuple> minVersion = {
-      {PlatformKind::macOS, llvm::VersionTuple(10, 14)},
-      {PlatformKind::iOS, llvm::VersionTuple(12, 0)},
-      {PlatformKind::iOSSimulator, llvm::VersionTuple(13, 0)},
-      {PlatformKind::tvOS, llvm::VersionTuple(12, 0)},
-      {PlatformKind::tvOSSimulator, llvm::VersionTuple(13, 0)},
-      {PlatformKind::watchOS, llvm::VersionTuple(5, 0)},
-      {PlatformKind::watchOSSimulator, llvm::VersionTuple(6, 0)}};
-  auto it = minVersion.find(platformInfo.target.Platform);
+  static const std::vector<std::pair<PlatformKind, VersionTuple>> minVersion = {
+      {PlatformKind::macOS, VersionTuple(10, 14)},
+      {PlatformKind::iOS, VersionTuple(12, 0)},
+      {PlatformKind::iOSSimulator, VersionTuple(13, 0)},
+      {PlatformKind::tvOS, VersionTuple(12, 0)},
+      {PlatformKind::tvOSSimulator, VersionTuple(13, 0)},
+      {PlatformKind::watchOS, VersionTuple(5, 0)},
+      {PlatformKind::watchOSSimulator, VersionTuple(6, 0)}};
+  auto it = llvm::find_if(minVersion, [&](const auto &p) {
+    return p.first == platformInfo.target.Platform;
+  });
   return it == minVersion.end() ? true : platformInfo.minimum >= it->second;
 }
 
@@ -692,10 +690,6 @@ template <class LP> void Writer::createLoadCommands() {
       make<LCDysymtab>(symtabSection, indirectSymtabSection));
   if (!config->umbrella.empty())
     in.header->addLoadCommand(make<LCSubFramework>(config->umbrella));
-  if (functionStartsSection)
-    in.header->addLoadCommand(make<LCFunctionStarts>(functionStartsSection));
-  if (dataInCodeSection)
-    in.header->addLoadCommand(make<LCDataInCode>(dataInCodeSection));
   if (config->emitEncryptionInfo)
     in.header->addLoadCommand(make<LCEncryptionInfo<LP>>());
   for (StringRef path : config->runtimePaths)
@@ -704,7 +698,6 @@ template <class LP> void Writer::createLoadCommands() {
   switch (config->outputType) {
   case MH_EXECUTE:
     in.header->addLoadCommand(make<LCLoadDylinker>());
-    in.header->addLoadCommand(make<LCMain>());
     break;
   case MH_DYLIB:
     in.header->addLoadCommand(make<LCDylib>(LC_ID_DYLIB, config->installName,
@@ -724,6 +717,10 @@ template <class LP> void Writer::createLoadCommands() {
     in.header->addLoadCommand(make<LCBuildVersion>(config->platformInfo));
   else
     in.header->addLoadCommand(make<LCMinVersion>(config->platformInfo));
+
+  // This is down here to match ld64's load command order.
+  if (config->outputType == MH_EXECUTE)
+    in.header->addLoadCommand(make<LCMain>());
 
   int64_t dylibOrdinal = 1;
   DenseMap<StringRef, int64_t> ordinalForInstallName;
@@ -791,6 +788,10 @@ template <class LP> void Writer::createLoadCommands() {
     }
   }
 
+  if (functionStartsSection)
+    in.header->addLoadCommand(make<LCFunctionStarts>(functionStartsSection));
+  if (dataInCodeSection)
+    in.header->addLoadCommand(make<LCDataInCode>(dataInCodeSection));
   if (codeSignatureSection)
     in.header->addLoadCommand(make<LCCodeSignature>(codeSignatureSection));
 
@@ -877,16 +878,6 @@ static void sortSegmentsAndSections() {
   }
 }
 
-NamePair macho::maybeRenameSection(NamePair key) {
-  auto newNames = config->sectionRenameMap.find(key);
-  if (newNames != config->sectionRenameMap.end())
-    return newNames->second;
-  auto newName = config->segmentRenameMap.find(key.first);
-  if (newName != config->segmentRenameMap.end())
-    return std::make_pair(newName->second, key.second);
-  return key;
-}
-
 template <class LP> void Writer::createOutputSections() {
   TimeTraceScope timeScope("Create output sections");
   // First, create hidden sections
@@ -917,10 +908,7 @@ template <class LP> void Writer::createOutputSections() {
   for (ConcatInputSection *isec : inputSections) {
     if (isec->shouldOmitFromOutput())
       continue;
-    NamePair names = maybeRenameSection({isec->getSegName(), isec->getName()});
-    ConcatOutputSection *&osec = concatOutputSections[names];
-    if (!osec)
-      osec = make<ConcatOutputSection>(names.second);
+    ConcatOutputSection *osec = cast<ConcatOutputSection>(isec->parent);
     osec->addInput(isec);
     osec->inputOrder =
         std::min(osec->inputOrder, static_cast<int>(isec->outSecOff));
@@ -932,7 +920,8 @@ template <class LP> void Writer::createOutputSections() {
     StringRef segname = it.first.first;
     ConcatOutputSection *osec = it.second;
     assert(segname != segment_names::ld);
-    getOrCreateOutputSegment(segname)->addOutputSection(osec);
+    if (osec->isNeeded())
+      getOrCreateOutputSegment(segname)->addOutputSection(osec);
   }
 
   for (SyntheticSection *ssec : syntheticSections) {
