@@ -1,0 +1,18 @@
+#!/bin/bash
+td="$(cd $(dirname $0)/.. && pwd)"
+build_dir="$td/build/mlir"
+src_dir="$td/trees/llvm-project"
+export CC=clang
+export CXX=clang++
+cmake $src_dir/llvm/ -GNinja -B$build_dir \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DLLVM_USE_SPLIT_DWARF=ON \
+  -DLLVM_ENABLE_ASSERTIONS=ON \
+  -DLLVM_USE_SPLIT_DWARF=ON \
+  -DLLVM_USE_LINKER=lld \
+  -DLLVM_TARGETS_TO_BUILD=X86 \
+  -DLLVM_ENABLE_PROJECTS=mlir \
+  -DLLVM_CCACHE_BUILD=ON \
+  -DMLIR_ENABLE_BINDINGS_PYTHON=ON \
+  -DPython3_EXECUTABLE="$(which python)" \
+  "$@"
