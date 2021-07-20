@@ -208,6 +208,8 @@ def HLO_ConvertOp : HLO_UnaryElementwiseOp<"convert",
 
   let hasFolder = 1;
 
+  let hasCanonicalizer = 1;
+
   let hasCustomHLOConverter = 1;
 }
 
@@ -955,13 +957,13 @@ def HLO_AllReduceOp : HLO_Op<"all_reduce",
   let hasCustomHLOConverter = 1;
 }
 
-def HLO_AllReduceScatterOp : HLO_Op<"all_reduce_scatter",
+def HLO_ReduceScatterOp : HLO_Op<"reduce_scatter",
     [SameOperandsAndResultElementType]> {
-  let summary = "AllReduceScatter operator";
+  let summary = "ReduceScatter operator";
   let description = [{
      Performs all_reduce followed by a scatter.
 
-     See https://www.tensorflow.org/xla/operation_semantics#allreducescatter
+     See https://www.tensorflow.org/xla/operation_semantics#reducescatter
   }];
 
   let arguments = (ins
@@ -2305,7 +2307,7 @@ def HLO_DynamicConvOp : HLO_Op<"dynamic_conv", [NoSideEffect]>, BASE_HLO_ConvOp 
   let results = (outs HLO_Tensor);
   let hasCustomHLOConverter = 1;
 }
-
+  
 def HLO_PrintOp : HLO_Op<"print", []> {
   let summary = "Print operation";
   let description = [{

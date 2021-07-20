@@ -1,5 +1,5 @@
 #
-# Copyright 2020 The TensorFlow Authors. All Rights Reserved.
+# Copyright 2021 The TensorFlow Authors. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,18 +14,16 @@
 # limitations under the License.
 #
 
-add_mlir_library(MLIRMhloUtils
-  broadcast_utils.cc
-  codegen_utils.cc
-  convert_op_folder.cc
-  cycle_detector.cc
-  hlo_utils.cc
+add_mlir_library(MLIRBufferTransforms
+  buffer_reuse.cc
+
+  DEPENDS
+  LMHLOTransformsPassIncGen
+
+  LINK_COMPONENTS
+  Core
 
   LINK_LIBS PUBLIC
   MLIRIR
-  MLIRLLVMIR
-  MLIRMemRef
   MLIRPass
-  MLIRStandard
-  MLIRSupport
-  )
+)

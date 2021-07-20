@@ -13,21 +13,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#ifndef MLIR_HLO_TRANSFORMS_REGISTER_PASSES_H_
-#define MLIR_HLO_TRANSFORMS_REGISTER_PASSES_H_
+#include "llvm/ADT/StringRef.h"
 
-#include "mlir-hlo/Transforms/passes.h"
-#include "mlir/Pass/Pass.h"
+#ifndef TENSORFLOW_COMPILER_MLIR_HLO_INCLUDE_MLIR_HLO_UTILS_PLACEMENT_UTIL_H_
+#define TENSORFLOW_COMPILER_MLIR_HLO_INCLUDE_MLIR_HLO_UTILS_PLACEMENT_UTIL_H_
 
 namespace mlir {
-namespace hlo {
+namespace mhlo {
+namespace placement_utils {
 
-#define GEN_PASS_REGISTRATION
-#include "mlir-hlo/Transforms/passes.h.inc"
+constexpr llvm::StringRef c_cpu = "cpu";
+constexpr llvm::StringRef c_gpu = "gpu";
 
-inline void registerAllHloPasses() { registerLMHLOTransformsPasses(); }
+}  // namespace placement_utils
+}  // namespace mhlo
+}  // namespace mlir
 
-}  // end namespace hlo
-}  // end namespace mlir
-
-#endif  // MLIR_HLO_TRANSFORMS_REGISTER_PASSES_H_
+#endif  // TENSORFLOW_COMPILER_MLIR_HLO_INCLUDE_MLIR_HLO_UTILS_PLACEMENT_UTIL_H_

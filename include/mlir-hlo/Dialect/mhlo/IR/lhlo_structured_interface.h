@@ -13,21 +13,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#ifndef MLIR_HLO_TRANSFORMS_REGISTER_PASSES_H_
-#define MLIR_HLO_TRANSFORMS_REGISTER_PASSES_H_
+#ifndef TENSORFLOW_COMPILER_MLIR_HLO_INCLUDE_MLIR_HLO_DIALECT_MHLO_IR_LHLO_STRUCTURED_INTERFACE_H_
+#define TENSORFLOW_COMPILER_MLIR_HLO_INCLUDE_MLIR_HLO_DIALECT_MHLO_IR_LHLO_STRUCTURED_INTERFACE_H_
 
-#include "mlir-hlo/Transforms/passes.h"
-#include "mlir/Pass/Pass.h"
+#include "mlir/IR/OpDefinition.h"
 
-namespace mlir {
-namespace hlo {
+/// Include the generated interface declarations.
+#include "mlir-hlo/Dialect/mhlo/IR/lhlo_structured_interface.h.inc"
 
-#define GEN_PASS_REGISTRATION
-#include "mlir-hlo/Transforms/passes.h.inc"
-
-inline void registerAllHloPasses() { registerLMHLOTransformsPasses(); }
-
-}  // end namespace hlo
-}  // end namespace mlir
-
-#endif  // MLIR_HLO_TRANSFORMS_REGISTER_PASSES_H_
+#endif  // TENSORFLOW_COMPILER_MLIR_HLO_INCLUDE_MLIR_HLO_DIALECT_MHLO_IR_LHLO_STRUCTURED_INTERFACE_H_

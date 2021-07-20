@@ -13,21 +13,30 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#ifndef MLIR_HLO_TRANSFORMS_REGISTER_PASSES_H_
-#define MLIR_HLO_TRANSFORMS_REGISTER_PASSES_H_
+#ifdef GET_SUPPORTED_OP_LIST
+#undef GET_SUPPORTED_OP_LIST
 
-#include "mlir-hlo/Transforms/passes.h"
-#include "mlir/Pass/Pass.h"
+// clang-format off
 
-namespace mlir {
-namespace hlo {
+// Unary Elementwise Ops
+lmhlo::AbsOp, lmhlo::CeilOp, lmhlo::FloorOp, lmhlo::ConvertOp, lmhlo::CosOp,
+lmhlo::ExpOp, lmhlo::LogOp, lmhlo::NegOp, lmhlo::RsqrtOp, lmhlo::SqrtOp,
+lmhlo::SignOp, lmhlo::TanhOp,
 
-#define GEN_PASS_REGISTRATION
-#include "mlir-hlo/Transforms/passes.h.inc"
+// Binary Elementwise Ops
+lmhlo::AddOp, lmhlo::DivOp, lmhlo::MaxOp, lmhlo::MinOp, lmhlo::MulOp,
+lmhlo::RemOp, lmhlo::SubOp, lmhlo::AndOp, lmhlo::OrOp, lmhlo::CompareOp,
+lmhlo::PowOp,
 
-inline void registerAllHloPasses() { registerLMHLOTransformsPasses(); }
+// Ternary Elementwise Ops
+lmhlo::SelectOp,
 
-}  // end namespace hlo
-}  // end namespace mlir
+// Other Ops
+lmhlo::ConstOp,
+lmhlo::RealDynamicSliceOp,
+lmhlo::DynamicBroadcastInDimOp,
+lmhlo::BroadcastInDimOp
 
-#endif  // MLIR_HLO_TRANSFORMS_REGISTER_PASSES_H_
+// clang-format on
+
+#endif
