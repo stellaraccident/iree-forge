@@ -13,21 +13,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-#ifndef MLIR_HLO_TRANSFORMS_REGISTER_PASSES_H_
-#define MLIR_HLO_TRANSFORMS_REGISTER_PASSES_H_
-
-#include "mlir-hlo/Transforms/passes.h"
-#include "mlir/Pass/Pass.h"
+#include "mlir-hlo/Dialect/mhlo/IR/lhlo_structured_interface.h"
 
 namespace mlir {
-namespace hlo {
+namespace lmhlo {
 
-#define GEN_PASS_REGISTRATION
-#include "mlir-hlo/Transforms/passes.h.inc"
+#include "mlir-hlo/Dialect/mhlo/IR/lhlo_structured_interface.cpp.inc"
 
-inline void registerAllHloPasses() { registerLMHLOTransformsPasses(); }
-
-}  // end namespace hlo
-}  // end namespace mlir
-
-#endif  // MLIR_HLO_TRANSFORMS_REGISTER_PASSES_H_
+}  // namespace lmhlo
+}  // namespace mlir
