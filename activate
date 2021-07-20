@@ -1,0 +1,25 @@
+if [[ -z $IREE_FORGE_ORIG_PATH ]]; then
+  IREE_FORGE_ORIG_PATH="$PATH"
+fi
+
+export PATH="$(dirname "${BASH_SOURCE[0]}")/scripts:$IREE_FORGE_ORIG_PATH"
+
+function setup_iree_forge_venv() {
+  local venv_dir="$(dirname "${BASH_SOURCE[0]}")/build/iree-forge.venv"
+  if ! [[ -f $venv_dir/bin/activate ]]; then
+    mkdir -p "$(dirname "$venv_dir")"
+    local pyexe
+    pyexe="$(which python)"
+    echo "Creating virtual environment with $pyexe"
+    "$pyexe" -m venv "$venv_dir"
+  fi
+  source "$venv_dir/bin/activate"
+}
+
+function iree_forge_python_requirements() {
+  local this_dir="$(dirname "${BASH_SOURCE[0]}")"
+  echo "Processing MLIR requirements..."
+  python -m pip install -r "$this_dir"/trees/llvm-project/mlir/python/requirements.txt
+}
+
+setup_iree_forge_venv
