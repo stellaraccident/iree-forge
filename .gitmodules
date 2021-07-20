@@ -26,9 +26,6 @@
 [submodule "trees/iree/third_party/tracy"]
 	path = trees/iree/third_party/tracy
 	url = https://github.com/wolfpld/tracy.git
-[submodule "trees/iree/third_party/mlir-emitc"]
-	path = trees/iree/third_party/mlir-emitc
-	url = https://github.com/iml130/mlir-emitc.git
 [submodule "trees/iree/third_party/flatcc"]
 	path = trees/iree/third_party/flatcc
 	url = https://github.com/dvidelabs/flatcc.git
@@ -56,3 +53,6 @@
 [submodule "trees/mlir-npcomp/external/mlir-hlo"]
 	path = trees/mlir-npcomp/external/mlir-hlo
 	url = https://github.com/tensorflow/mlir-hlo
+[submodule "trees/iree/third_party/webgpu-headers"]
+	path = trees/iree/third_party/webgpu-headers
+	url = https://github.com/webgpu-native/webgpu-headers.git
